@@ -1,0 +1,771 @@
+/* =============================================================================
+   Fadoilul Mun'im — Portfolio styles (Tailwind CSS v4)
+   Visual direction: "Calm Editorial" — whitespace, hairline rules, soft shadows,
+   indigo (#4f46e5) used sparingly as accent.
+
+   How this file is organized:
+     1. Tailwind import + dark-mode variant
+     2. Design tokens (@theme, light) + dark overrides + plain layout vars
+     3. @layer base — element defaults Preflight doesn't cover
+     4. @layer components — semantic atoms via @apply (kept in the markup)
+     5. Custom, non-utility CSS — effects that can't be expressed as utilities
+        (hero overlay, timeline, scroll-reveal, sticky header, mobile nav, …)
+
+   Dark mode is driven by `data-theme="dark"` on <html> (set by the inline FOUC
+   script in index.html, toggled by src/main.js). Because the swappable tokens
+   below live in a *regular* @theme block, every color/shadow utility resolves
+   through var(--token) and is re-colored automatically when data-theme flips —
+   no `dark:` variants needed on color utilities.
+   ============================================================================= */
+
+@import "tailwindcss";
+
+/* Re-point the default `dark` variant at the data-theme attribute. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ============================== 1. DESIGN TOKENS ============================== */
+@theme {
+  /* Typography */
+  --font-sans:
+    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
+    "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+
+  /* Fluid type scale → text-xs … text-3xl.
+     Reset the namespace first so Tailwind's default per-size line-heights are
+     dropped; line-height is governed by the base layer (body 1.65 / headings 1.12). */
+  --text-*: initial;
+  --text-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
+  --text-sm: clamp(0.875rem, 0.85rem + 0.18vw, 0.9375rem);
+  --text-base: clamp(1rem, 0.97rem + 0.22vw, 1.0625rem);
+  --text-lg: clamp(1.125rem, 1.06rem + 0.4vw, 1.25rem);
+  --text-xl: clamp(1.35rem, 1.2rem + 0.7vw, 1.65rem);
+  --text-2xl: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
+  --text-3xl: clamp(2.5rem, 1.7rem + 3.6vw, 4rem);
+
+  /* Line heights → leading-tight/snug/normal */
+  --leading-tight: 1.12;
+  --leading-snug: 1.35;
+  --leading-normal: 1.65;
+
+  /* Radii → rounded-sm/md/lg (rounded-full stays a Tailwind default) */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+
+  /* Surfaces & text (light theme = default) */
+  --color-bg: #ffffff;
+  --color-bg-subtle: #f8fafc; /* alternating section background */
+  --color-surface: #ffffff; /* cards */
+  --color-surface-2: #f1f5f9; /* chips */
+  --color-border: #e6e8ee; /* hairlines */
+  --color-border-strong: #d7dbe4;
+
+  --color-text: #0f172a; /* primary */
+  --color-text-muted: #475569; /* secondary */
+  --color-text-subtle: #64748b; /* dates / meta */
+
+  --color-primary: #4f46e5; /* links, accents, buttons */
+  --color-primary-hover: #4338ca;
+  --color-primary-contrast: #ffffff; /* text on primary button */
+  --color-accent-soft: #eef2ff; /* faint indigo wash */
+  --color-focus: #6366f1;
+
+  /* Shadows → shadow-sm / shadow-md */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 4px 6px -2px rgba(15, 23, 42, 0.05), 0 12px 24px -8px rgba(15, 23, 42, 0.1);
+}
+
+/* Dark theme overrides — utilities reference var(--color-…) so they swap here. */
+[data-theme="dark"] {
+  --color-bg: #0b1120;
+  --color-bg-subtle: #0f172a;
+  --color-surface: #131c30;
+  --color-surface-2: #1e293b;
+  --color-border: #273249;
+  --color-border-strong: #334155;
+
+  --color-text: #f1f5f9;
+  --color-text-muted: #cbd5e1;
+  --color-text-subtle: #94a3b8;
+
+  --color-primary: #818cf8; /* lighter indigo keeps AA contrast on dark */
+  --color-primary-hover: #a5b4fc;
+  --color-primary-contrast: #0b1120; /* dark text on light-indigo button */
+  --color-accent-soft: #1e2540;
+  --color-focus: #a5b4fc;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 24px -8px rgba(0, 0, 0, 0.55);
+}
+
+/* Plain custom properties used only by the custom CSS below (not utilities). */
+:root {
+  --hero-glow-1: rgba(79, 70, 229, 0.06);
+  --hero-glow-2: rgba(79, 70, 229, 0.02);
+  --section-pad: clamp(3.5rem, 8vw, 6rem);
+  --max-width: 1100px;
+  --nav-height: 64px;
+}
+[data-theme="dark"] {
+  --hero-glow-1: rgba(129, 140, 248, 0.1);
+  --hero-glow-2: rgba(129, 140, 248, 0.03);
+}
+
+/* ============================== 3. BASE ============================== */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: calc(var(--nav-height) + 12px);
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    color: var(--color-text);
+    background: var(--color-bg);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* clip (not hidden) avoids forcing overflow-y:auto, which would break position:sticky */
+    overflow-x: clip;
+    transition: background-color 180ms ease, color 180ms ease;
+  }
+
+  a {
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--color-primary-hover);
+  }
+
+  h1,
+  h2,
+  h3 {
+    line-height: var(--leading-tight);
+    font-weight: 700;
+    color: var(--color-text);
+  }
+
+  ::selection {
+    background: var(--color-primary);
+    color: #fff;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+/* ============================== 4. COMPONENTS ============================== */
+@layer components {
+  /* ---- Layout helpers ---- */
+  .container {
+    @apply mx-auto w-full;
+    max-width: var(--max-width);
+    padding-inline: clamp(1.1rem, 4vw, 2rem);
+  }
+
+  .section {
+    padding-block: var(--section-pad);
+  }
+  .section--alt {
+    @apply bg-bg-subtle;
+  }
+
+  .section__title {
+    @apply mt-2 text-2xl;
+    letter-spacing: -0.02em;
+  }
+  .section__lead {
+    @apply mt-3 max-w-[60ch] text-lg text-text-muted;
+  }
+
+  .eyebrow {
+    @apply inline-block text-xs font-semibold text-primary uppercase;
+    letter-spacing: 0.14em;
+  }
+
+  .skip-link {
+    @apply absolute left-1/2 z-[1000] -translate-x-1/2 rounded-sm bg-primary text-white;
+    top: -100px;
+    padding: 0.6rem 1rem;
+    transition: top 180ms ease;
+  }
+  .skip-link:focus {
+    @apply text-white;
+    top: 8px;
+  }
+
+  /* ---- Icons ---- */
+  .icon {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  /* ---- Buttons ---- */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold whitespace-nowrap;
+    min-height: 44px;
+    padding: 0.7rem 1.25rem;
+    border: 1.5px solid transparent;
+    transition:
+      background-color 180ms ease, color 180ms ease, border-color 180ms ease,
+      transform 180ms ease, box-shadow 180ms ease;
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn--primary {
+    @apply bg-primary text-primary-contrast;
+    box-shadow: var(--shadow-sm);
+  }
+  .btn--primary:hover {
+    @apply bg-primary-hover text-primary-contrast;
+  }
+  .btn--outline {
+    @apply bg-surface text-text border-border-strong;
+  }
+  .btn--outline:hover {
+    @apply text-primary border-primary;
+  }
+  .btn--ghost {
+    @apply text-text-muted;
+  }
+  .btn--ghost:hover {
+    @apply bg-accent-soft text-primary;
+  }
+  .btn--sm {
+    min-height: 38px;
+    padding: 0.45rem 0.95rem;
+  }
+
+  /* ---- Icon buttons (nav controls) ---- */
+  .icon-btn {
+    @apply inline-flex items-center justify-center rounded-md text-text-muted;
+    gap: 0.35rem;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0.4rem 0.6rem;
+    transition: background-color 180ms ease, color 180ms ease;
+  }
+  .icon-btn:hover {
+    @apply bg-surface-2 text-text;
+  }
+  .lang-toggle__label {
+    @apply text-sm font-bold;
+    letter-spacing: 0.03em;
+  }
+
+  /* ---- Chips ---- */
+  .chips {
+    @apply flex flex-wrap gap-2;
+  }
+  .chip {
+    @apply inline-flex items-center rounded-full border border-border bg-surface-2 text-sm font-medium text-text-muted;
+    padding: 0.4rem 0.8rem;
+  }
+  .chips--sm .chip {
+    @apply text-xs;
+    padding: 0.28rem 0.65rem;
+  }
+
+  /* ---- Navbar ---- */
+  .nav {
+    @apply flex items-center justify-between gap-4;
+    min-height: var(--nav-height);
+  }
+  .nav__brand {
+    @apply inline-flex items-center text-text;
+    gap: 0.6rem;
+  }
+  .nav__brand:hover {
+    @apply text-text;
+  }
+  .nav__brand-mark {
+    @apply inline-grid place-items-center bg-primary font-extrabold text-white;
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    font-size: 0.9rem;
+    letter-spacing: 0.02em;
+  }
+  .nav__brand-name {
+    @apply text-sm font-bold;
+    letter-spacing: -0.01em;
+  }
+  .nav__links {
+    @apply flex items-center gap-1;
+  }
+  .nav__link {
+    @apply inline-block rounded-sm text-sm font-medium text-text-muted;
+    padding: 0.5rem 0.7rem;
+    transition: color 180ms ease, background-color 180ms ease;
+  }
+  .nav__link:hover {
+    @apply bg-surface-2 text-text;
+  }
+  .nav__link[aria-current="true"] {
+    @apply bg-accent-soft font-semibold text-primary;
+  }
+  .nav__links-cta {
+    @apply ml-2;
+  }
+  .nav__controls {
+    @apply flex items-center gap-1;
+  }
+
+  /* ---- Hero atoms ---- */
+  .hero__meta-item {
+    @apply inline-flex items-center text-sm text-text-subtle;
+    gap: 0.45rem;
+  }
+  .hero__meta-item .icon {
+    @apply text-primary;
+    width: 18px;
+    height: 18px;
+  }
+  .hero__badge {
+    @apply rounded-full border border-border bg-surface text-text-muted;
+    padding: 0.35rem 0.8rem;
+  }
+  .hero__badge .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+  }
+
+  /* ---- Stats ---- */
+  .stat {
+    @apply rounded-md border border-border bg-surface p-4;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat__value {
+    @apply block text-2xl font-extrabold text-primary;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .stat__label {
+    @apply mt-1 block text-sm text-text-subtle;
+  }
+
+  /* ---- Skills ---- */
+  .skill-group {
+    @apply rounded-lg border border-border bg-surface p-6;
+    box-shadow: var(--shadow-sm);
+  }
+  .skill-group__title {
+    @apply mb-3 text-xs font-bold text-text-subtle uppercase;
+    letter-spacing: 0.12em;
+  }
+
+  /* ---- Experience timeline cards ---- */
+  .tcard {
+    @apply rounded-lg border border-border bg-surface p-6;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
+  }
+  .tcard:hover {
+    @apply border-border-strong;
+    box-shadow: var(--shadow-md);
+  }
+  .tcard__role {
+    @apply text-lg;
+  }
+  .tcard__company {
+    @apply mt-[0.15rem] text-sm font-semibold text-primary;
+  }
+  .tcard__meta {
+    @apply mt-[0.35rem] flex flex-wrap items-center text-xs text-text-subtle;
+    gap: 0.35rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .tcard__dot {
+    opacity: 0.6;
+  }
+  .tcard__desc {
+    @apply mt-3 text-sm text-text-muted;
+  }
+  .tcard__points {
+    @apply mt-3 grid;
+    gap: 0.5rem;
+  }
+  .tcard__points li {
+    @apply relative text-sm text-text-muted;
+    padding-left: 1.3rem;
+  }
+  .tcard__points li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.62em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    opacity: 0.7;
+  }
+
+  /* ---- Projects ---- */
+  .pcard {
+    @apply flex flex-col rounded-lg border border-border bg-surface p-6;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
+  }
+  .pcard:hover {
+    @apply -translate-y-[3px] border-border-strong;
+    box-shadow: var(--shadow-md);
+  }
+  .pcard__title {
+    @apply text-lg;
+  }
+  .pcard__context {
+    @apply mt-[0.2rem] text-xs font-semibold text-primary;
+    letter-spacing: 0.02em;
+  }
+  .pcard__desc {
+    @apply mt-3 text-sm text-text-muted;
+  }
+  .pcard .chips {
+    @apply mt-4;
+  }
+  .pcard__link {
+    @apply mt-auto inline-flex items-center pt-4 text-xs text-text-subtle;
+    gap: 0.4rem;
+  }
+  .pcard__link::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1.5px dashed var(--color-border-strong);
+  }
+  .pcard__link--live {
+    @apply text-primary;
+  }
+  .pcard__link--live::before {
+    border-style: solid;
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+  }
+  .pcard__link--live:hover {
+    text-decoration: underline;
+  }
+
+  /* ---- Certificates ---- */
+  .cert__link {
+    @apply flex items-center rounded-md border border-border bg-surface p-4 text-text;
+    gap: 1rem;
+    min-height: 44px;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  }
+  .cert__link:hover {
+    @apply border-primary text-text;
+    box-shadow: var(--shadow-md);
+  }
+  .cert__year {
+    @apply text-sm font-extrabold text-primary;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+    width: 2.6rem;
+  }
+  .cert__body {
+    @apply flex min-w-0 flex-1 flex-col;
+  }
+  .cert__title {
+    @apply text-sm font-semibold;
+  }
+  .cert__issuer {
+    @apply mt-[0.1rem] text-xs text-text-subtle;
+  }
+  .cert__ext {
+    @apply text-text-subtle;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+  .cert__link:hover .cert__ext {
+    @apply text-primary;
+  }
+
+  /* ---- Education ---- */
+  .edu {
+    @apply rounded-lg border border-border bg-surface p-6 shadow-sm;
+    max-width: 720px;
+  }
+  .edu__school {
+    @apply text-lg;
+  }
+  .edu__period {
+    @apply text-sm text-text-subtle;
+    font-variant-numeric: tabular-nums;
+  }
+  .edu__degree {
+    @apply mt-[0.4rem] text-sm font-semibold text-primary;
+  }
+  .edu__points li {
+    @apply flex items-center text-sm text-text-muted;
+    gap: 0.6rem;
+  }
+  .edu__chip {
+    @apply inline-block rounded-full bg-accent-soft text-xs font-bold text-primary;
+    padding: 0.3rem 0.7rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---- Contact ---- */
+  .contact__link {
+    @apply flex items-center rounded-md border border-border bg-surface p-4 text-text;
+    gap: 1rem;
+    min-height: 44px;
+    box-shadow: var(--shadow-sm);
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  }
+  a.contact__link:hover {
+    @apply -translate-y-[2px] border-primary text-text;
+    box-shadow: var(--shadow-md);
+  }
+  .contact__link--static {
+    cursor: default;
+  }
+  .contact__icon {
+    @apply inline-grid place-items-center rounded-md bg-accent-soft text-primary;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+  }
+  .contact__text {
+    @apply flex min-w-0 flex-col;
+  }
+  .contact__label {
+    @apply text-xs text-text-subtle;
+  }
+  .contact__value {
+    @apply text-sm font-semibold;
+    overflow-wrap: anywhere;
+  }
+
+  /* ---- Footer ---- */
+  .site-footer {
+    @apply bg-bg-subtle;
+    border-top: 1px solid var(--color-border);
+    padding-block: 2rem;
+  }
+  .site-footer__name {
+    @apply font-bold;
+  }
+  .site-footer__tagline {
+    @apply text-sm text-text-subtle;
+  }
+  .site-footer__copy {
+    @apply text-sm text-text-subtle;
+  }
+  .site-footer__top {
+    @apply text-sm font-semibold;
+  }
+}
+
+/* ============================== 5. CUSTOM (non-utility) CSS ============================== */
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* ---- Scroll-reveal (progressive enhancement; only when JS is available) ---- */
+.js .reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 600ms ease, transform 600ms ease;
+  will-change: opacity, transform;
+}
+.js .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- Sticky translucent header ---- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
+  -webkit-backdrop-filter: saturate(180%) blur(10px);
+  backdrop-filter: saturate(180%) blur(10px);
+  border-bottom: 1px solid var(--color-border);
+}
+
+/* ---- Theme-toggle glyph swap ---- */
+.theme-toggle .icon--moon {
+  display: none;
+}
+[data-theme="dark"] .theme-toggle .icon--sun {
+  display: none;
+}
+[data-theme="dark"] .theme-toggle .icon--moon {
+  display: block;
+}
+
+/* ---- Hamburger glyph swap (hidden on desktop; shown on mobile below) ---- */
+.nav__toggle {
+  display: none;
+}
+.nav__toggle .icon--close {
+  display: none;
+}
+.nav__toggle[aria-expanded="true"] .icon--menu {
+  display: none;
+}
+.nav__toggle[aria-expanded="true"] .icon--close {
+  display: block;
+}
+
+.nav__backdrop {
+  position: fixed;
+  inset: var(--nav-height) 0 0 0;
+  background: rgba(15, 23, 42, 0.4);
+  z-index: 90;
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+
+/* ---- Hero background (radial glow + faint grid overlay) ---- */
+.hero {
+  position: relative;
+  padding-block: clamp(3.5rem, 10vw, 7rem) var(--section-pad);
+  background:
+    radial-gradient(60% 70% at 15% 0%, var(--hero-glow-1), transparent 70%),
+    radial-gradient(50% 60% at 95% 10%, var(--hero-glow-2), transparent 70%);
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--color-border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
+  background-size: 64px 64px;
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 0%, #000 0%, transparent 75%);
+  mask-image: radial-gradient(70% 60% at 50% 0%, #000 0%, transparent 75%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ---- Experience timeline rail + dots ---- */
+.timeline {
+  position: relative;
+  margin-top: 2rem;
+  padding-left: 1.75rem;
+}
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: var(--color-border-strong);
+}
+.timeline__item {
+  position: relative;
+  padding-bottom: 1.5rem;
+}
+.timeline__item:last-child {
+  padding-bottom: 0;
+}
+.timeline__item::before {
+  content: "";
+  position: absolute;
+  left: calc(-1.75rem + 1px);
+  top: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  border: 3px solid var(--color-bg);
+  box-shadow: 0 0 0 1px var(--color-border-strong);
+}
+
+/* ---- Mobile/tablet navigation: below 1024px the links collapse into a panel.
+        The breakpoint is generous so the longer Indonesian labels still fit the bar. ---- */
+@media (max-width: 1023px) {
+  .nav__toggle {
+    display: inline-flex;
+  }
+  .nav__links {
+    position: fixed;
+    top: var(--nav-height);
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    padding: 1rem clamp(1.1rem, 4vw, 2rem) 2rem;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-12px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 180ms ease, transform 180ms ease, visibility 180ms ease;
+    z-index: 95;
+    max-height: calc(100dvh - var(--nav-height));
+    overflow-y: auto;
+  }
+  .nav__links.is-open {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+  }
+  .nav__link {
+    padding: 0.75rem 0.7rem;
+    font-size: var(--text-base);
+  }
+  .nav__links-cta {
+    margin-left: 0;
+    margin-top: 0.5rem;
+  }
+  .nav__links-cta .btn {
+    width: 100%;
+  }
+  .nav__backdrop.is-open {
+    display: block;
+    opacity: 1;
+  }
+}
+
+/* ---- Larger timeline indent on wide screens ---- */
+@media (min-width: 1024px) {
+  .timeline {
+    padding-left: 2.25rem;
+  }
+  .timeline__item::before {
+    left: calc(-2.25rem + 1px);
+  }
+}

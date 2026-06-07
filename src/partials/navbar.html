@@ -1,0 +1,60 @@
+<header class="site-header" id="top">
+  <nav class="nav container" aria-label="Primary">
+    <a class="nav__brand" href="#top" aria-label="Fadoilul Mun'im — home">
+      <span class="nav__brand-mark" aria-hidden="true">FM</span>
+      <span class="nav__brand-name max-[360px]:hidden">Fadoilul Mun'im</span>
+    </a>
+
+    <!-- Primary links (collapse into the hamburger panel on mobile) -->
+    <ul class="nav__links" id="nav-menu">
+      <li><a class="nav__link" href="#about" data-i18n="nav.about">About</a></li>
+      <li><a class="nav__link" href="#skills" data-i18n="nav.skills">Skills</a></li>
+      <li><a class="nav__link" href="#experience" data-i18n="nav.experience">Experience</a></li>
+      <li><a class="nav__link" href="#projects" data-i18n="nav.projects">Projects</a></li>
+      <li><a class="nav__link" href="#certificates" data-i18n="nav.certificates">Certificates</a></li>
+      <li><a class="nav__link" href="#contact" data-i18n="nav.contact">Contact</a></li>
+      <li class="nav__links-cta">
+        <a class="btn btn--primary btn--sm" href="/Fadoilul-Munim-CV.pdf" download data-i18n="nav.downloadCv">Download
+          CV</a>
+      </li>
+    </ul>
+
+    <!-- Always-visible controls -->
+    <div class="nav__controls">
+      <!-- Language toggle: label shows the language you switch TO -->
+      <button class="icon-btn lang-toggle" id="lang-toggle" type="button"
+        data-i18n-attr="aria-label:nav.lang.aria; title:nav.lang.aria">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18" />
+        </svg>
+        <span class="lang-toggle__label" id="lang-label">ID</span>
+      </button>
+
+      <!-- Theme toggle: both glyphs exist; CSS shows the right one per data-theme -->
+      <button class="icon-btn theme-toggle" id="theme-toggle" type="button" aria-pressed="false"
+        data-i18n-attr="aria-label:nav.theme.aria; title:nav.theme.aria">
+        <svg class="icon icon--sun" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <circle cx="12" cy="12" r="4.2" />
+          <path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8" />
+        </svg>
+        <svg class="icon icon--moon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M20 14.5A8 8 0 1 1 9.5 4a6.4 6.4 0 0 0 10.5 10.5Z" />
+        </svg>
+      </button>
+
+      <!-- Hamburger (mobile only) -->
+      <button class="icon-btn nav__toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu"
+        data-i18n-attr="aria-label:nav.menu.aria; title:nav.menu.aria">
+        <svg class="icon icon--menu" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M3 6h18M3 12h18M3 18h18" />
+        </svg>
+        <svg class="icon icon--close" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+          <path d="M5 5l14 14M19 5 5 19" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<div class="nav__backdrop" id="nav-backdrop" hidden></div>

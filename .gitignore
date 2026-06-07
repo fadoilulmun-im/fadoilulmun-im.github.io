@@ -1,0 +1,26 @@
+# OS cruft
+.DS_Store
+.AppleDouble
+Thumbs.db
+Desktop.ini
+
+# Editor / IDE
+.vscode/
+.idea/
+*.sublime-*
+*.swp
+*.swo
+
+# Logs & caches
+*.log
+.cache/
+.tmp/
+
+# Dependencies
+node_modules/
+
+# Vite build output (produced by CI on deploy)
+dist/
+
+# Claude Code local settings (machine-local permissions)
+.claude/settings.local.json
