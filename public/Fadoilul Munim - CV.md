@@ -5,7 +5,7 @@
 - Phone: +6285155214341
 - Email: fadoilulmun.im2807@gmail.com
 - Address: Surabaya, Indonesia
-- Linkedin: linkedin.com/in/fadoilulmun-im
+- Portfolio: fadoilulmun-im.github.io
 
 ## TECHNICAL SUMMARY
 - Fullstack programmer with 4+ years of experience
