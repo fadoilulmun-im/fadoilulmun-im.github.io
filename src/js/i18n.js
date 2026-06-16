@@ -30,6 +30,7 @@ export const I18N = {
     "hero.cta.work": "View Work",
     "hero.cta.cv": "Download CV",
     "hero.cta.contact": "Get in Touch",
+    "hero.photoAlt": "Portrait of Fadoilul Mun'im, Fullstack Developer",
 
     "about.eyebrow": "About",
     "about.heading": "A bit about me",
@@ -194,6 +195,7 @@ export const I18N = {
     "hero.cta.work": "Lihat Karya",
     "hero.cta.cv": "Unduh CV",
     "hero.cta.contact": "Hubungi Saya",
+    "hero.photoAlt": "Potret Fadoilul Mun'im, Fullstack Developer",
 
     "about.eyebrow": "Tentang",
     "about.heading": "Sedikit tentang saya",
