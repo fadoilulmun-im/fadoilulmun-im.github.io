@@ -117,12 +117,21 @@ export const I18N = {
     "proj.eyebrow": "Projects",
     "proj.heading": "Selected work",
     "proj.lead":
-      "Highlights derived from my professional experience. Live links can be added here later.",
+      "Highlights derived from my professional experience.",
     "proj.linkSoon": "Link coming soon",
     "proj.visitSite": "Visit site",
     "proj.gajihub.title": "HR & Payroll API Platform",
     "proj.gajihub.desc":
       "RESTful payroll & HR APIs in Laravel, plus an internal admin panel built with React, Tailwind CSS, and Inertia.js.",
+    "proj.semtek.title": "Totalisator Monitoring Platform",
+    "proj.semtek.desc":
+      "Web-based totalisator system with real-time transaction monitoring, customizable dashboards, and operator oversight.",
+    "proj.wanderup.title": "Travel & Adventure Booking Site",
+    "proj.wanderup.desc":
+      "Marketing & booking site for a Karimunjawa tour operator, with curated vacation packages, detailed package pages, and WhatsApp booking inquiries.",
+    "proj.isaluny.title": "Organization & Member Management System",
+    "proj.isaluny.desc":
+      "Admin platform for managing organization data and membership, built on Laravel with a Filament admin panel.",
     "proj.erp.title": "Fabric-Sales ERP",
     "proj.erp.desc":
       "End-to-end ERP for a fabric-sales company covering core business operations, built with Laravel.",
@@ -272,12 +281,21 @@ export const I18N = {
     "proj.eyebrow": "Proyek",
     "proj.heading": "Karya pilihan",
     "proj.lead":
-      "Sorotan yang diambil dari pengalaman profesional saya. Tautan langsung dapat ditambahkan di sini nanti.",
+      "Sorotan yang diambil dari pengalaman profesional saya.",
     "proj.linkSoon": "Tautan segera hadir",
     "proj.visitSite": "Kunjungi situs",
     "proj.gajihub.title": "Platform API HR & Payroll",
     "proj.gajihub.desc":
       "RESTful API payroll & HR di Laravel, ditambah panel admin internal yang dibangun dengan React, Tailwind CSS, dan Inertia.js.",
+    "proj.semtek.title": "Platform Monitoring Totalisator",
+    "proj.semtek.desc":
+      "Sistem totalisator berbasis web dengan monitoring transaksi real-time, dashboard yang dapat disesuaikan, dan pengawasan operator.",
+    "proj.wanderup.title": "Situs Pemesanan Wisata & Petualangan",
+    "proj.wanderup.desc":
+      "Situs pemasaran & pemesanan untuk operator wisata Karimunjawa, dengan paket liburan pilihan, halaman detail paket, dan pemesanan lewat WhatsApp.",
+    "proj.isaluny.title": "Sistem Manajemen Organisasi & Anggota",
+    "proj.isaluny.desc":
+      "Platform admin untuk mengelola data organisasi dan keanggotaan, dibangun dengan Laravel dan panel admin Filament.",
     "proj.erp.title": "ERP Penjualan Kain",
     "proj.erp.desc":
       "ERP menyeluruh untuk perusahaan penjualan kain yang mencakup operasi bisnis inti, dibangun dengan Laravel.",
