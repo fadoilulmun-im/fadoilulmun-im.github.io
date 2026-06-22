@@ -14,7 +14,7 @@ function setThemeColorMeta(theme) {
     meta.id = "meta-theme-color";
     document.head.appendChild(meta);
   }
-  meta.setAttribute("content", theme === "dark" ? "#0b1120" : "#ffffff");
+  meta.setAttribute("content", theme === "dark" ? "#141414" : "#f5f5f3");
 }
 
 function applyTheme(theme, persist) {

@@ -1,114 +1,124 @@
 /* =============================================================================
    Fadoilul Mun'im — Portfolio styles (Tailwind CSS v4)
-   Visual direction: "Calm Editorial" — whitespace, hairline rules, soft shadows,
-   indigo (#4f46e5) used sparingly as accent.
+   Visual direction: "Manuscript" — monochrome restraint. Paper & ink, hairline
+   rules, maximum whitespace, a single deep ink-blue accent used 1–2× per view.
+   Type: Fraunces (display serif, optical) · Instrument Sans (text) · IBM Plex Mono
+   (the "technical label" voice — eyebrows, section numbers, dates, tags).
 
    How this file is organized:
-     1. Tailwind import + dark-mode variant
+     1. Tailwind import + self-hosted fonts + dark-mode variant
      2. Design tokens (@theme, light) + dark overrides + plain layout vars
      3. @layer base — element defaults Preflight doesn't cover
      4. @layer components — semantic atoms via @apply (kept in the markup)
      5. Custom, non-utility CSS — effects that can't be expressed as utilities
-        (hero overlay, timeline, scroll-reveal, sticky header, mobile nav, …)
+        (scroll-reveal + stagger, sticky header, hero masthead, ledgers, mobile nav)
 
    Dark mode is driven by `data-theme="dark"` on <html> (set by the inline FOUC
-   script in index.html, toggled by src/main.js). Because the swappable tokens
-   below live in a *regular* @theme block, every color/shadow utility resolves
-   through var(--token) and is re-colored automatically when data-theme flips —
-   no `dark:` variants needed on color utilities.
+   script in index.html, wired by src/js/theme.js). Swappable tokens live in a
+   *regular* @theme block, so every color utility resolves through var(--token)
+   and re-colors automatically when data-theme flips — no `dark:` variants needed.
    ============================================================================= */
 
 @import "tailwindcss";
+
+/* Self-hosted fonts (Fontsource) — no third-party request, offline-capable.
+   Fraunces ships the optical-size axis (opsz+wght); font-optical-sizing:auto
+   (CSS default) drives the cut from display size. Each @font-face carries a
+   unicode-range, so only the Latin subset is fetched for EN/ID copy. */
+@import "@fontsource-variable/fraunces/opsz.css";
+@import "@fontsource-variable/fraunces/opsz-italic.css";
+@import "@fontsource-variable/instrument-sans";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-mono/600.css";
 
 /* Re-point the default `dark` variant at the data-theme attribute. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /* ============================== 1. DESIGN TOKENS ============================== */
 @theme {
-  /* Typography */
+  /* Typography — editorial trio */
   --font-sans:
-    "Inter", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
-    "Apple Color Emoji", "Segoe UI Emoji", sans-serif;
+    "Instrument Sans Variable", system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-display:
+    "Fraunces Variable", Georgia, "Times New Roman", serif;
+  --font-mono:
+    "IBM Plex Mono", ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas,
+    monospace;
 
-  /* Fluid type scale → text-xs … text-3xl.
-     Reset the namespace first so Tailwind's default per-size line-heights are
-     dropped; line-height is governed by the base layer (body 1.65 / headings 1.12). */
+  /* Fluid type scale → text-xs … text-3xl. Reset the namespace first so
+     Tailwind's default per-size line-heights drop; leading governed by base. */
   --text-*: initial;
   --text-xs: clamp(0.75rem, 0.72rem + 0.15vw, 0.8125rem);
   --text-sm: clamp(0.875rem, 0.85rem + 0.18vw, 0.9375rem);
   --text-base: clamp(1rem, 0.97rem + 0.22vw, 1.0625rem);
-  --text-lg: clamp(1.125rem, 1.06rem + 0.4vw, 1.25rem);
-  --text-xl: clamp(1.35rem, 1.2rem + 0.7vw, 1.65rem);
-  --text-2xl: clamp(1.75rem, 1.4rem + 1.6vw, 2.5rem);
-  --text-3xl: clamp(2.5rem, 1.7rem + 3.6vw, 4rem);
+  --text-lg: clamp(1.125rem, 1.06rem + 0.4vw, 1.3125rem);
+  --text-xl: clamp(1.4rem, 1.2rem + 0.9vw, 1.85rem);
+  --text-2xl: clamp(2rem, 1.5rem + 2.2vw, 3.25rem);
+  --text-3xl: clamp(3rem, 1.9rem + 5vw, 6rem);
 
   /* Line heights → leading-tight/snug/normal */
-  --leading-tight: 1.12;
+  --leading-tight: 1.04;
   --leading-snug: 1.35;
-  --leading-normal: 1.65;
+  --leading-normal: 1.7;
 
-  /* Radii → rounded-sm/md/lg (rounded-full stays a Tailwind default) */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 18px;
+  /* Radii → rounded-sm/md/lg (editorial = near-square) */
+  --radius-sm: 2px;
+  --radius-md: 3px;
+  --radius-lg: 4px;
 
-  /* Surfaces & text (light theme = default) */
-  --color-bg: #ffffff;
-  --color-bg-subtle: #f8fafc; /* alternating section background */
-  --color-surface: #ffffff; /* cards */
-  --color-surface-2: #f1f5f9; /* chips */
-  --color-border: #e6e8ee; /* hairlines */
-  --color-border-strong: #d7dbe4;
+  /* Surfaces & ink (light theme = paper, default) */
+  --color-bg: #f5f5f3; /* cool off-white paper */
+  --color-bg-subtle: #efefec; /* alternating section band — barely darker */
+  --color-surface: #f5f5f3; /* "cards" = paper; defined by rules, not fills */
+  --color-surface-2: #ecece8; /* faint tag fill / hover tint */
+  --color-border: #dededa; /* hairline */
+  --color-border-strong: #c6c6c0; /* stronger hairline / rules */
 
-  --color-text: #0f172a; /* primary */
-  --color-text-muted: #475569; /* secondary */
-  --color-text-subtle: #64748b; /* dates / meta */
+  --color-text: #141414; /* near-black ink */
+  --color-text-muted: #4a4a47; /* secondary */
+  --color-text-subtle: #76746e; /* dates / meta / mono labels */
 
-  --color-primary: #4f46e5; /* links, accents, buttons */
-  --color-primary-hover: #4338ca;
-  --color-primary-contrast: #ffffff; /* text on primary button */
-  --color-accent-soft: #eef2ff; /* faint indigo wash */
-  --color-focus: #6366f1;
+  --color-primary: #1b3bcb; /* the ONE accent — deep ink-blue, used sparingly */
+  --color-primary-hover: #14309f;
+  --color-primary-contrast: #f5f5f3; /* paper text on the rare filled accent */
+  --color-accent-soft: #e7eaf8; /* very faint blue wash, used almost never */
+  --color-focus: #1b3bcb;
 
-  /* Shadows → shadow-sm / shadow-md */
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
-  --shadow-md: 0 4px 6px -2px rgba(15, 23, 42, 0.05), 0 12px 24px -8px rgba(15, 23, 42, 0.1);
+  /* Shadows → none. Manuscript leans on hairline borders, not elevation. */
+  --shadow-sm: none;
+  --shadow-md: none;
 }
 
-/* Dark theme overrides — utilities reference var(--color-…) so they swap here. */
+/* Dark theme overrides — warm near-black, paper ink, brighter blue for contrast. */
 [data-theme="dark"] {
-  --color-bg: #0b1120;
-  --color-bg-subtle: #0f172a;
-  --color-surface: #131c30;
-  --color-surface-2: #1e293b;
-  --color-border: #273249;
-  --color-border-strong: #334155;
+  --color-bg: #141414;
+  --color-bg-subtle: #1a1a19;
+  --color-surface: #141414;
+  --color-surface-2: #232321;
+  --color-border: #2c2c2a;
+  --color-border-strong: #3a3a37;
 
-  --color-text: #f1f5f9;
-  --color-text-muted: #cbd5e1;
-  --color-text-subtle: #94a3b8;
+  --color-text: #eceae3;
+  --color-text-muted: #b6b4ac;
+  --color-text-subtle: #87857d;
 
-  --color-primary: #818cf8; /* lighter indigo keeps AA contrast on dark */
-  --color-primary-hover: #a5b4fc;
-  --color-primary-contrast: #0b1120; /* dark text on light-indigo button */
+  --color-primary: #8fa4ff; /* brighter ink-blue keeps AA contrast on near-black */
+  --color-primary-hover: #b3c0ff;
+  --color-primary-contrast: #141414;
   --color-accent-soft: #1e2540;
-  --color-focus: #a5b4fc;
+  --color-focus: #8fa4ff;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 8px 24px -8px rgba(0, 0, 0, 0.55);
+  --shadow-sm: none;
+  --shadow-md: none;
 }
 
 /* Plain custom properties used only by the custom CSS below (not utilities). */
 :root {
-  --hero-glow-1: rgba(79, 70, 229, 0.06);
-  --hero-glow-2: rgba(79, 70, 229, 0.02);
-  --section-pad: clamp(3.5rem, 8vw, 6rem);
-  --max-width: 1100px;
+  --section-pad: clamp(4.5rem, 11vw, 8rem);
+  --max-width: 1080px;
   --nav-height: 64px;
-}
-[data-theme="dark"] {
-  --hero-glow-1: rgba(129, 140, 248, 0.1);
-  --hero-glow-2: rgba(129, 140, 248, 0.03);
 }
 
 /* ============================== 3. BASE ============================== */
@@ -130,7 +140,7 @@
     text-rendering: optimizeLegibility;
     /* clip (not hidden) avoids forcing overflow-y:auto, which would break position:sticky */
     overflow-x: clip;
-    transition: background-color 180ms ease, color 180ms ease;
+    transition: background-color 200ms ease, color 200ms ease;
   }
 
   a {
@@ -141,12 +151,15 @@
     color: var(--color-primary-hover);
   }
 
+  /* Headlines are Fraunces; let the optical axis follow size, keep them light. */
   h1,
   h2,
   h3 {
+    font-family: var(--font-display);
+    font-weight: 400;
     line-height: var(--leading-tight);
-    font-weight: 700;
     color: var(--color-text);
+    font-optical-sizing: auto;
   }
 
   ::selection {
@@ -157,7 +170,7 @@
   :focus-visible {
     outline: 2px solid var(--color-focus);
     outline-offset: 2px;
-    border-radius: 4px;
+    border-radius: 2px;
   }
 }
 
@@ -167,7 +180,7 @@
   .container {
     @apply mx-auto w-full;
     max-width: var(--max-width);
-    padding-inline: clamp(1.1rem, 4vw, 2rem);
+    padding-inline: clamp(1.1rem, 4vw, 2.25rem);
   }
 
   .section {
@@ -177,23 +190,51 @@
     @apply bg-bg-subtle;
   }
 
+  /* Editorial section header: "01 ———————— ABOUT" then the big serif title. */
+  .section__kicker {
+    @apply flex items-center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .section__index {
+    @apply font-mono text-sm text-text-subtle;
+    font-variant-numeric: tabular-nums;
+    flex-shrink: 0;
+  }
+  .section__kicker .eyebrow {
+    flex-shrink: 0;
+  }
+  .section__kicker .rule {
+    flex: 1;
+  }
+
+  .rule {
+    display: block;
+    height: 1px;
+    border: 0;
+    background: var(--color-border);
+  }
+
   .section__title {
-    @apply mt-2 text-2xl;
-    letter-spacing: -0.02em;
+    @apply text-2xl;
+    font-weight: 400;
+    letter-spacing: -0.015em;
+    max-width: 18ch;
   }
   .section__lead {
-    @apply mt-3 max-w-[60ch] text-lg text-text-muted;
+    @apply mt-4 max-w-[60ch] text-lg text-text-muted;
   }
 
   .eyebrow {
-    @apply inline-block text-xs font-semibold text-primary uppercase;
-    letter-spacing: 0.14em;
+    @apply inline-block font-mono text-xs text-text-subtle uppercase;
+    letter-spacing: 0.22em;
   }
 
   .skip-link {
-    @apply absolute left-1/2 z-[1000] -translate-x-1/2 rounded-sm bg-primary text-white;
+    @apply absolute left-1/2 z-[1000] -translate-x-1/2 bg-primary text-white;
     top: -100px;
     padding: 0.6rem 1rem;
+    border-radius: var(--radius-sm);
     transition: top 180ms ease;
   }
   .skip-link:focus {
@@ -201,82 +242,87 @@
     top: 8px;
   }
 
-  /* ---- Icons ---- */
+  /* ---- Icons (hairline) ---- */
   .icon {
-    width: 22px;
-    height: 22px;
+    width: 20px;
+    height: 20px;
     fill: none;
     stroke: currentColor;
-    stroke-width: 1.8;
+    stroke-width: 1.5;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
 
-  /* ---- Buttons ---- */
+  /* ---- Buttons (square, mono labels) ---- */
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-full text-sm font-semibold whitespace-nowrap;
+    @apply inline-flex items-center justify-center gap-2 font-mono text-xs uppercase whitespace-nowrap;
     min-height: 44px;
-    padding: 0.7rem 1.25rem;
-    border: 1.5px solid transparent;
+    padding: 0.7rem 1.35rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.1em;
     transition:
       background-color 180ms ease, color 180ms ease, border-color 180ms ease,
-      transform 180ms ease, box-shadow 180ms ease;
+      transform 120ms ease;
   }
   .btn:active {
     transform: translateY(1px);
   }
   .btn--primary {
-    @apply bg-primary text-primary-contrast;
-    box-shadow: var(--shadow-sm);
+    @apply bg-primary text-primary-contrast border-primary;
   }
   .btn--primary:hover {
-    @apply bg-primary-hover text-primary-contrast;
+    @apply bg-primary-hover border-primary-hover text-primary-contrast;
   }
   .btn--outline {
-    @apply bg-surface text-text border-border-strong;
+    @apply bg-transparent text-text border-border-strong;
   }
   .btn--outline:hover {
-    @apply text-primary border-primary;
+    @apply text-text border-text;
   }
   .btn--ghost {
     @apply text-text-muted;
+    border-color: transparent;
   }
   .btn--ghost:hover {
-    @apply bg-accent-soft text-primary;
+    @apply text-text;
   }
   .btn--sm {
     min-height: 38px;
-    padding: 0.45rem 0.95rem;
+    padding: 0.5rem 1rem;
   }
 
   /* ---- Icon buttons (nav controls) ---- */
   .icon-btn {
-    @apply inline-flex items-center justify-center rounded-md text-text-muted;
+    @apply inline-flex items-center justify-center text-text-muted;
     gap: 0.35rem;
     min-width: 44px;
     min-height: 44px;
     padding: 0.4rem 0.6rem;
+    border-radius: var(--radius-sm);
     transition: background-color 180ms ease, color 180ms ease;
   }
   .icon-btn:hover {
     @apply bg-surface-2 text-text;
   }
   .lang-toggle__label {
-    @apply text-sm font-bold;
-    letter-spacing: 0.03em;
+    @apply font-mono text-xs font-medium;
+    letter-spacing: 0.08em;
   }
 
-  /* ---- Chips ---- */
+  /* ---- Chips (typeset mono tags) ---- */
   .chips {
-    @apply flex flex-wrap gap-2;
+    @apply flex flex-wrap;
+    gap: 0.5rem;
   }
   .chip {
-    @apply inline-flex items-center rounded-full border border-border bg-surface-2 text-sm font-medium text-text-muted;
-    padding: 0.4rem 0.8rem;
+    @apply inline-flex items-center border border-border bg-transparent font-mono text-xs text-text-subtle;
+    border-radius: var(--radius-sm);
+    padding: 0.3rem 0.6rem;
+    letter-spacing: 0.01em;
   }
   .chips--sm .chip {
-    @apply text-xs;
-    padding: 0.28rem 0.65rem;
+    padding: 0.22rem 0.5rem;
   }
 
   /* ---- Navbar ---- */
@@ -292,268 +338,368 @@
     @apply text-text;
   }
   .nav__brand-mark {
-    @apply inline-grid place-items-center bg-primary font-extrabold text-white;
-    width: 34px;
-    height: 34px;
-    border-radius: 9px;
-    font-size: 0.9rem;
+    @apply inline-grid place-items-center bg-transparent font-mono font-semibold text-text;
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--color-text);
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
     letter-spacing: 0.02em;
   }
   .nav__brand-name {
-    @apply text-sm font-bold;
-    letter-spacing: -0.01em;
+    @apply font-mono text-sm font-medium;
+    letter-spacing: 0.01em;
   }
   .nav__links {
-    @apply flex items-center gap-1;
+    @apply flex items-center;
+    gap: 0.15rem;
   }
   .nav__link {
-    @apply inline-block rounded-sm text-sm font-medium text-text-muted;
-    padding: 0.5rem 0.7rem;
-    transition: color 180ms ease, background-color 180ms ease;
+    @apply inline-block font-mono text-xs text-text-muted;
+    letter-spacing: 0.01em;
+    padding: 0.5rem 0.55rem;
+    border-radius: var(--radius-sm);
+    transition: color 180ms ease, box-shadow 180ms ease;
   }
   .nav__link:hover {
-    @apply bg-surface-2 text-text;
+    @apply text-text;
   }
   .nav__link[aria-current="true"] {
-    @apply bg-accent-soft font-semibold text-primary;
+    @apply text-text;
+    box-shadow: inset 0 -2px 0 0 var(--color-text);
   }
   .nav__links-cta {
     @apply ml-2;
   }
   .nav__controls {
-    @apply flex items-center gap-1;
+    @apply flex items-center;
+    gap: 0.15rem;
   }
 
-  /* ---- Hero atoms ---- */
+  /* ---- Hero masthead ---- */
+  .hero__name {
+    font-family: var(--font-display);
+    font-size: var(--text-3xl);
+    font-weight: 400;
+    line-height: 0.98;
+    letter-spacing: -0.025em;
+    font-optical-sizing: auto;
+  }
+  .hero__title {
+    @apply font-mono text-sm text-text-muted uppercase;
+    margin-top: 0.9rem;
+    letter-spacing: 0.18em;
+  }
+  .hero__intro {
+    margin-top: 1.5rem;
+    max-width: 54ch;
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+  }
   .hero__meta-item {
-    @apply inline-flex items-center text-sm text-text-subtle;
+    @apply inline-flex items-center font-mono text-sm text-text-subtle;
     gap: 0.45rem;
   }
   .hero__meta-item .icon {
-    @apply text-primary;
-    width: 18px;
-    height: 18px;
+    @apply text-text-subtle;
+    width: 16px;
+    height: 16px;
   }
   .hero__badge {
-    @apply rounded-full border border-border bg-surface text-text-muted;
+    @apply inline-flex items-center border border-border bg-transparent text-text-muted;
+    gap: 0.5rem;
+    border-radius: var(--radius-sm);
     padding: 0.35rem 0.8rem;
   }
   .hero__badge .dot {
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
-    background: #22c55e;
-    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+    background: var(--color-primary);
   }
 
-  /* ---- Stats ---- */
+  /* ---- Stats: big editorial figures in a hairline ledger ---- */
   .stat {
-    @apply rounded-md border border-border bg-surface p-4;
-    box-shadow: var(--shadow-sm);
+    @apply flex flex-col;
+    padding: 1.2rem 0;
+    border-top: 1px solid var(--color-border);
   }
   .stat__value {
-    @apply block text-2xl font-extrabold text-primary;
-    letter-spacing: -0.03em;
+    @apply block font-display text-text;
+    font-size: var(--text-2xl);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
+    font-optical-sizing: auto;
   }
   .stat__label {
-    @apply mt-1 block text-sm text-text-subtle;
+    @apply mt-2 block font-mono text-xs text-text-subtle uppercase;
+    letter-spacing: 0.1em;
   }
 
-  /* ---- Skills ---- */
+  /* ---- Skills: open columns split by hairlines ---- */
   .skill-group {
-    @apply rounded-lg border border-border bg-surface p-6;
-    box-shadow: var(--shadow-sm);
+    @apply flex flex-col;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-border);
   }
   .skill-group__title {
-    @apply mb-3 text-xs font-bold text-text-subtle uppercase;
-    letter-spacing: 0.12em;
+    @apply mb-4 font-mono text-xs text-text-subtle uppercase;
+    letter-spacing: 0.14em;
   }
 
-  /* ---- Experience timeline cards ---- */
+  /* ---- Experience: CV ledger (date column | role + detail) ---- */
+  .timeline {
+    @apply grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 2.5rem;
+  }
+  .timeline__item {
+    border-top: 1px solid var(--color-border);
+  }
+  .timeline__item:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
   .tcard {
-    @apply rounded-lg border border-border bg-surface p-6;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
+    @apply grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+    padding: 2rem 0;
   }
-  .tcard:hover {
-    @apply border-border-strong;
-    box-shadow: var(--shadow-md);
+  .tcard__aside {
+    @apply flex flex-col;
+    gap: 0.25rem;
   }
-  .tcard__role {
-    @apply text-lg;
-  }
-  .tcard__company {
-    @apply mt-[0.15rem] text-sm font-semibold text-primary;
-  }
-  .tcard__meta {
-    @apply mt-[0.35rem] flex flex-wrap items-center text-xs text-text-subtle;
-    gap: 0.35rem;
+  .tcard__period {
+    @apply font-mono text-sm text-text;
     font-variant-numeric: tabular-nums;
   }
-  .tcard__dot {
-    opacity: 0.6;
+  .tcard__location {
+    @apply font-mono text-xs text-text-subtle uppercase;
+    letter-spacing: 0.08em;
+  }
+  .tcard__role {
+    @apply text-lg text-text;
+    font-weight: 440;
+  }
+  .tcard__company {
+    @apply mt-1 font-mono text-xs text-text-muted uppercase;
+    letter-spacing: 0.1em;
   }
   .tcard__desc {
     @apply mt-3 text-sm text-text-muted;
+    max-width: 62ch;
   }
   .tcard__points {
     @apply mt-3 grid;
-    gap: 0.5rem;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.45rem;
+    max-width: 64ch;
   }
   .tcard__points li {
     @apply relative text-sm text-text-muted;
-    padding-left: 1.3rem;
+    padding-left: 1.25rem;
   }
   .tcard__points li::before {
-    content: "";
+    content: "—";
     position: absolute;
     left: 0;
-    top: 0.62em;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--color-primary);
-    opacity: 0.7;
+    top: 0;
+    color: var(--color-text-subtle);
   }
 
-  /* ---- Projects ---- */
-  .pcard {
-    @apply flex flex-col rounded-lg border border-border bg-surface p-6;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow 180ms ease, transform 180ms ease, border-color 180ms ease;
+  /* ---- Projects: indexed editorial list ---- */
+  .projects {
+    @apply grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 2.5rem;
   }
-  .pcard:hover {
-    @apply -translate-y-[3px] border-border-strong;
-    box-shadow: var(--shadow-md);
+  .pcard {
+    @apply grid items-start;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 0.9rem 1.5rem;
+    padding: 2.25rem 0;
+    border-top: 1px solid var(--color-border);
+  }
+  .pcard:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
+  .pcard__index {
+    @apply font-mono text-sm text-text-subtle;
+    font-variant-numeric: tabular-nums;
+    padding-top: 0.5rem;
+  }
+  .pcard__body {
+    @apply min-w-0;
   }
   .pcard__title {
-    @apply text-lg;
+    @apply text-xl text-text;
+    font-weight: 440;
   }
   .pcard__context {
-    @apply mt-[0.2rem] text-xs font-semibold text-primary;
-    letter-spacing: 0.02em;
+    @apply mt-1 font-mono text-xs text-text-muted uppercase;
+    letter-spacing: 0.1em;
   }
   .pcard__desc {
     @apply mt-3 text-sm text-text-muted;
+    max-width: 58ch;
   }
   .pcard .chips {
     @apply mt-4;
   }
   .pcard__link {
-    @apply mt-auto inline-flex items-center pt-4 text-xs text-text-subtle;
-    gap: 0.4rem;
+    @apply mt-5 inline-flex items-center font-mono text-xs text-text-subtle uppercase;
+    gap: 0.5rem;
+    letter-spacing: 0.08em;
+    transition: color 180ms ease;
   }
-  .pcard__link::before {
-    content: "";
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    border: 1.5px dashed var(--color-border-strong);
+  .pcard__link::after {
+    content: "→";
+    transition: transform 180ms ease;
   }
   .pcard__link--live {
     @apply text-primary;
   }
-  .pcard__link--live::before {
-    border-style: solid;
-    border-color: var(--color-primary);
-    background: var(--color-primary);
-  }
   .pcard__link--live:hover {
-    text-decoration: underline;
+    @apply text-primary-hover;
+  }
+  .pcard__link--live:hover::after {
+    transform: translateX(3px);
   }
 
-  /* ---- Certificates ---- */
+  /* ---- Certificates: index/bibliography ledger ---- */
+  .certs {
+    @apply grid;
+    margin-top: 2.5rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cert {
+    border-top: 1px solid var(--color-border);
+  }
+  .cert:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
   .cert__link {
-    @apply flex items-center rounded-md border border-border bg-surface p-4 text-text;
-    gap: 1rem;
-    min-height: 44px;
-    box-shadow: var(--shadow-sm);
-    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+    @apply grid items-baseline text-text;
+    grid-template-columns: 3.25rem minmax(0, 1fr) auto;
+    gap: 1.25rem;
+    padding: 1.1rem 0.3rem;
+    transition: background-color 180ms ease;
   }
   .cert__link:hover {
-    @apply border-primary text-text;
-    box-shadow: var(--shadow-md);
+    @apply bg-surface-2 text-text;
   }
   .cert__year {
-    @apply text-sm font-extrabold text-primary;
+    @apply font-mono text-sm text-text-subtle;
     font-variant-numeric: tabular-nums;
-    flex-shrink: 0;
-    width: 2.6rem;
   }
   .cert__body {
-    @apply flex min-w-0 flex-1 flex-col;
+    @apply flex min-w-0 flex-col;
+    gap: 0.15rem;
   }
   .cert__title {
-    @apply text-sm font-semibold;
+    @apply text-base text-text;
   }
   .cert__issuer {
-    @apply mt-[0.1rem] text-xs text-text-subtle;
+    @apply font-mono text-xs text-text-subtle uppercase;
+    letter-spacing: 0.06em;
   }
   .cert__ext {
-    @apply text-text-subtle;
-    width: 18px;
-    height: 18px;
+    @apply self-center text-text-subtle;
+    width: 16px;
+    height: 16px;
     flex-shrink: 0;
   }
   .cert__link:hover .cert__ext {
-    @apply text-primary;
+    @apply text-text;
   }
 
-  /* ---- Education ---- */
-  .edu {
-    @apply rounded-lg border border-border bg-surface p-6 shadow-sm;
-    max-width: 720px;
+  /* ---- Education: single ledger entry ---- */
+  .education__list {
+    margin-top: 2.5rem;
   }
-  .edu__school {
-    @apply text-lg;
+  .edu {
+    @apply grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+    padding: 2rem 0;
+    border-top: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+  }
+  .edu__aside {
+    @apply flex flex-col;
+    gap: 0.25rem;
   }
   .edu__period {
-    @apply text-sm text-text-subtle;
+    @apply font-mono text-sm text-text;
     font-variant-numeric: tabular-nums;
   }
+  .edu__school {
+    @apply text-lg text-text;
+    font-weight: 440;
+  }
   .edu__degree {
-    @apply mt-[0.4rem] text-sm font-semibold text-primary;
+    @apply mt-1 font-mono text-xs text-text-muted uppercase;
+    letter-spacing: 0.1em;
+  }
+  .edu__points {
+    @apply mt-3 grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
   }
   .edu__points li {
     @apply flex items-center text-sm text-text-muted;
-    gap: 0.6rem;
+    gap: 0.65rem;
   }
   .edu__chip {
-    @apply inline-block rounded-full bg-accent-soft text-xs font-bold text-primary;
-    padding: 0.3rem 0.7rem;
+    @apply inline-flex items-center border border-border bg-transparent font-mono text-xs text-text;
+    border-radius: var(--radius-sm);
+    padding: 0.22rem 0.55rem;
     font-variant-numeric: tabular-nums;
   }
 
-  /* ---- Contact ---- */
+  /* ---- Contact: index rows ---- */
+  .contact__list {
+    @apply grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 2.5rem;
+    gap: 0;
+  }
+  .contact__item {
+    border-top: 1px solid var(--color-border);
+  }
+  .contact__item:last-child {
+    border-bottom: 1px solid var(--color-border);
+  }
   .contact__link {
-    @apply flex items-center rounded-md border border-border bg-surface p-4 text-text;
-    gap: 1rem;
-    min-height: 44px;
-    box-shadow: var(--shadow-sm);
-    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+    @apply flex items-center text-text;
+    gap: 1.25rem;
+    padding: 1.15rem 0.3rem;
+    transition: background-color 180ms ease;
   }
   a.contact__link:hover {
-    @apply -translate-y-[2px] border-primary text-text;
-    box-shadow: var(--shadow-md);
+    @apply bg-surface-2 text-text;
   }
   .contact__link--static {
     cursor: default;
   }
   .contact__icon {
-    @apply inline-grid place-items-center rounded-md bg-accent-soft text-primary;
-    width: 42px;
-    height: 42px;
+    @apply inline-grid place-items-center text-text-subtle;
+    width: 24px;
+    height: 24px;
     flex-shrink: 0;
   }
   .contact__text {
     @apply flex min-w-0 flex-col;
+    gap: 0.12rem;
   }
   .contact__label {
-    @apply text-xs text-text-subtle;
+    @apply font-mono text-xs text-text-subtle uppercase;
+    letter-spacing: 0.12em;
   }
   .contact__value {
-    @apply text-sm font-semibold;
+    @apply text-base text-text;
     overflow-wrap: anywhere;
   }
 
@@ -561,19 +707,25 @@
   .site-footer {
     @apply bg-bg-subtle;
     border-top: 1px solid var(--color-border);
-    padding-block: 2rem;
+    padding-block: 2.5rem;
   }
   .site-footer__name {
-    @apply font-bold;
+    @apply font-display text-text;
+    font-weight: 460;
   }
   .site-footer__tagline {
-    @apply text-sm text-text-subtle;
+    @apply mt-1 font-mono text-xs text-text-subtle uppercase;
+    letter-spacing: 0.08em;
   }
   .site-footer__copy {
-    @apply text-sm text-text-subtle;
+    @apply font-mono text-xs text-text-subtle;
   }
   .site-footer__top {
-    @apply text-sm font-semibold;
+    @apply font-mono text-xs text-text-muted uppercase;
+    letter-spacing: 0.08em;
+  }
+  .site-footer__top:hover {
+    @apply text-text;
   }
 }
 
@@ -590,6 +742,7 @@
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
   .reveal {
@@ -601,8 +754,10 @@
 /* ---- Scroll-reveal (progressive enhancement; only when JS is available) ---- */
 .js .reveal {
   opacity: 0;
-  transform: translateY(18px);
-  transition: opacity 600ms ease, transform 600ms ease;
+  transform: translateY(10px);
+  transition:
+    opacity 640ms cubic-bezier(0.2, 0.6, 0.2, 1),
+    transform 640ms cubic-bezier(0.2, 0.6, 0.2, 1);
   will-change: opacity, transform;
 }
 .js .reveal.is-visible {
@@ -610,14 +765,33 @@
   transform: none;
 }
 
+/* Restrained staggered entrance for groups that reveal together (capped). */
+.js .stats > .reveal:nth-child(2),
+.js .skills__grid > .reveal:nth-child(2),
+.js .projects > .reveal:nth-child(2),
+.js .certs > .reveal:nth-child(2) {
+  transition-delay: 80ms;
+}
+.js .stats > .reveal:nth-child(3),
+.js .skills__grid > .reveal:nth-child(3),
+.js .projects > .reveal:nth-child(3),
+.js .certs > .reveal:nth-child(3) {
+  transition-delay: 160ms;
+}
+.js .stats > .reveal:nth-child(4),
+.js .projects > .reveal:nth-child(4),
+.js .certs > .reveal:nth-child(4) {
+  transition-delay: 240ms;
+}
+
 /* ---- Sticky translucent header ---- */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
-  -webkit-backdrop-filter: saturate(180%) blur(10px);
-  backdrop-filter: saturate(180%) blur(10px);
+  background: color-mix(in srgb, var(--color-bg) 86%, transparent);
+  -webkit-backdrop-filter: saturate(140%) blur(10px);
+  backdrop-filter: saturate(140%) blur(10px);
   border-bottom: 1px solid var(--color-border);
 }
 
@@ -649,106 +823,64 @@
 .nav__backdrop {
   position: fixed;
   inset: var(--nav-height) 0 0 0;
-  background: rgba(15, 23, 42, 0.4);
+  background: rgba(20, 20, 20, 0.4);
   z-index: 90;
   opacity: 0;
   transition: opacity 180ms ease;
 }
 
-/* ---- Hero: subtle tinted band so it reads as a distinct block above the
-        white About section; radial glow + faint grid overlay sit on top. ---- */
+/* ---- Hero masthead: flat paper, a hairline rule marks the boundary below. ---- */
 .hero {
   position: relative;
-  padding-block: clamp(3.5rem, 10vw, 7rem) clamp(3rem, 7vw, 5rem);
-  background-color: var(--color-bg-subtle);
-  background-image:
-    radial-gradient(60% 70% at 15% 0%, var(--hero-glow-1), transparent 70%),
-    radial-gradient(50% 60% at 95% 10%, var(--hero-glow-2), transparent 70%);
+  padding-block: clamp(4rem, 11vw, 8rem) clamp(3rem, 7vw, 5rem);
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
 }
 
-/* Tighten the hero→about gap: a color change marks this boundary now, so the
-   doubled section padding isn't needed. Scoped to this boundary only. */
-.hero + .section {
-  padding-top: clamp(2.5rem, 5vw, 3.5rem);
-}
-.hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background-image:
-    linear-gradient(var(--color-border) 1px, transparent 1px),
-    linear-gradient(90deg, var(--color-border) 1px, transparent 1px);
-  background-size: 64px 64px;
-  -webkit-mask-image: radial-gradient(70% 60% at 50% 0%, #000 0%, transparent 75%);
-  mask-image: radial-gradient(70% 60% at 50% 0%, #000 0%, transparent 75%);
-  opacity: 0.5;
-  pointer-events: none;
-}
-
-/* ---- Hero portrait: circular cut-out headshot (mirrored to face the copy) on a
-        neutral token backdrop (--color-border-strong) that re-tints light↔dark on its
-        own; a faint offset indigo disc (--color-accent-soft) adds depth behind it. ---- */
+/* ---- Hero portrait: square plate, hairline offset frame, grayscale → color on hover ---- */
 .hero__avatar {
   position: relative;
-  width: clamp(14rem, 30vw, 22rem);
-  aspect-ratio: 1;
+  width: clamp(13rem, 28vw, 20rem);
+  aspect-ratio: 4 / 5;
   margin: 0;
 }
 .hero__avatar::before {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  background: var(--color-accent-soft);
-  transform: translate(16px, 18px);
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--radius-sm);
+  transform: translate(12px, 12px);
+  z-index: 0;
 }
 .hero__avatar-img {
   position: relative;
   z-index: 1;
   width: 100%;
   height: 100%;
-  border-radius: 50%;
+  border-radius: var(--radius-sm);
   object-fit: cover;
   object-position: center;
   display: block;
-  background: var(--color-border-strong);
-  border: 1px solid var(--color-border);
-  box-shadow: var(--shadow-md);
+  background: var(--color-surface-2);
+  border: 1px solid var(--color-border-strong);
+  filter: grayscale(1) contrast(1.02);
+  transition: filter 450ms ease;
+}
+.hero__avatar:hover .hero__avatar-img {
+  filter: grayscale(0);
 }
 
-/* ---- Experience timeline rail + dots ---- */
-.timeline {
-  position: relative;
-  margin-top: 2rem;
-  padding-left: 1.75rem;
-}
-.timeline::before {
-  content: "";
-  position: absolute;
-  left: 6px;
-  top: 6px;
-  bottom: 6px;
-  width: 2px;
-  background: var(--color-border-strong);
-}
-.timeline__item {
-  position: relative;
-  padding-bottom: 1.5rem;
-}
-.timeline__item:last-child {
-  padding-bottom: 0;
-}
-.timeline__item::before {
-  content: "";
-  position: absolute;
-  left: calc(-1.75rem + 1px);
-  top: 8px;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  border: 3px solid var(--color-bg);
-  box-shadow: 0 0 0 1px var(--color-border-strong);
+/* ---- Experience / education ledger: two columns on wider screens ---- */
+@media (min-width: 880px) {
+  .tcard {
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: 0 3rem;
+  }
+  .edu {
+    grid-template-columns: 13rem minmax(0, 1fr);
+    gap: 0 3rem;
+  }
 }
 
 /* ---- Mobile/tablet navigation: below 1024px the links collapse into a panel.
@@ -765,10 +897,9 @@
     flex-direction: column;
     align-items: stretch;
     gap: 0.25rem;
-    padding: 1rem clamp(1.1rem, 4vw, 2rem) 2rem;
+    padding: 1rem clamp(1.1rem, 4vw, 2.25rem) 2rem;
     background: var(--color-bg);
     border-bottom: 1px solid var(--color-border);
-    box-shadow: var(--shadow-md);
     transform: translateY(-12px);
     opacity: 0;
     visibility: hidden;
@@ -783,12 +914,15 @@
     visibility: visible;
   }
   .nav__link {
-    padding: 0.75rem 0.7rem;
+    padding: 0.75rem 0.6rem;
     font-size: var(--text-base);
+  }
+  .nav__link[aria-current="true"] {
+    box-shadow: inset 2px 0 0 0 var(--color-text);
   }
   .nav__links-cta {
     margin-left: 0;
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
   }
   .nav__links-cta .btn {
     width: 100%;
@@ -796,15 +930,5 @@
   .nav__backdrop.is-open {
     display: block;
     opacity: 1;
-  }
-}
-
-/* ---- Larger timeline indent on wide screens ---- */
-@media (min-width: 1024px) {
-  .timeline {
-    padding-left: 2.25rem;
-  }
-  .timeline__item::before {
-    left: calc(-2.25rem + 1px);
   }
 }
