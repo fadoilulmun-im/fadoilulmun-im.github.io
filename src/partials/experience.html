@@ -5,152 +5,34 @@
       <span class="rule" aria-hidden="true"></span>
       <p class="eyebrow" data-i18n="exp.eyebrow">Experience</p>
     </div>
-    <h2 class="section__title reveal" id="experience-heading" data-i18n="exp.heading">Where I've worked</h2>
+    <h2 class="section__title reveal" id="experience-heading" data-i18n="exp.heading">
+      Where I've worked
+    </h2>
 
+    <!-- Timeline generated from src/data/experience.js (see vite.config.js context).
+         data-i18n keys (exp.<key>.role/period/location/desc/b1..bN) are generated
+         from the same data in src/js/i18n.js, so the EN/ID toggle stays in sync. -->
     <ol class="timeline">
-      <!-- 1. GajiHub -->
+      {{#each experiences}}
       <li class="timeline__item">
         <article class="tcard reveal">
           <div class="tcard__aside">
-            <p class="tcard__period" data-i18n="exp.gajihub.period">Jan 2025 – Present</p>
-            <p class="tcard__location" data-i18n="exp.gajihub.location">Remote</p>
+            <p class="tcard__period" data-i18n="exp.{{key}}.period">{{period.en}}</p>
+            <p class="tcard__location" data-i18n="exp.{{key}}.location">{{location.en}}</p>
           </div>
           <div class="tcard__main">
-            <h3 class="tcard__role" data-i18n="exp.gajihub.role">Backend Developer</h3>
-            <p class="tcard__company">PT Gajihub Berhati Nyaman</p>
-            <p class="tcard__desc" data-i18n="exp.gajihub.desc">
-              GajiHub is online HR &amp; payroll software that streamlines HR for small businesses.
-            </p>
+            <h3 class="tcard__role" data-i18n="exp.{{key}}.role">{{role.en}}</h3>
+            <p class="tcard__company">{{company}}</p>
+            <p class="tcard__desc" data-i18n="exp.{{key}}.desc">{{desc.en}}</p>
             <ul class="tcard__points">
-              <li data-i18n="exp.gajihub.b1">Build RESTful APIs with Laravel.</li>
-              <li data-i18n="exp.gajihub.b2">Add new features requested by clients.</li>
-              <li data-i18n="exp.gajihub.b3">Adjust existing features to client requests.</li>
-              <li data-i18n="exp.gajihub.b4">Write API documentation with Swagger.</li>
-              <li data-i18n="exp.gajihub.b5">Optimize existing features.</li>
-              <li data-i18n="exp.gajihub.b6">Build internal admin-panel features with React, Tailwind CSS, Inertia.js, and
-                Laravel.</li>
-              <li data-i18n="exp.gajihub.b7">Write unit tests with PHPUnit.</li>
-              <li data-i18n="exp.gajihub.b8">Manage tasks in Notion.</li>
+              {{#each points}}
+              <li data-i18n="exp.{{../key}}.b{{inc @index}}">{{this.en}}</li>
+              {{/each}}
             </ul>
           </div>
         </article>
       </li>
-
-      <!-- 2. Kampung Inggris LC -->
-      <li class="timeline__item">
-        <article class="tcard reveal">
-          <div class="tcard__aside">
-            <p class="tcard__period" data-i18n="exp.kampung.period">Apr 2024 – Dec 2024</p>
-            <p class="tcard__location" data-i18n="exp.kampung.location">Kediri, Indonesia</p>
-          </div>
-          <div class="tcard__main">
-            <h3 class="tcard__role" data-i18n="exp.kampung.role">Fullstack Programmer</h3>
-            <p class="tcard__company">Kampung Inggris LC</p>
-            <p class="tcard__desc" data-i18n="exp.kampung.desc">
-              An English-language course institution offering both offline and online learning.
-            </p>
-            <ul class="tcard__points">
-              <li data-i18n="exp.kampung.b1">Build cross-platform marketing apps with Flutter.</li>
-              <li data-i18n="exp.kampung.b2">Build RESTful APIs with Laravel and NestJS.</li>
-              <li data-i18n="exp.kampung.b3">Write API documentation with Swagger, Scribe, and Scramble.</li>
-            </ul>
-          </div>
-        </article>
-      </li>
-
-      <!-- 3. CV Digital Digdaya Multi Solusi
-               NOTE: the CV lists this role as "Jul 2023 – Dec 2025", which overlaps the GajiHub
-               role and ends slightly in the future. Rendered verbatim per the source CV. -->
-      <li class="timeline__item">
-        <article class="tcard reveal">
-          <div class="tcard__aside">
-            <p class="tcard__period" data-i18n="exp.digdaya.period">Jul 2023 – Dec 2025</p>
-            <p class="tcard__location" data-i18n="exp.digdaya.location">Remote</p>
-          </div>
-          <div class="tcard__main">
-            <h3 class="tcard__role" data-i18n="exp.digdaya.role">PHP Laravel Fullstack Programmer</h3>
-            <p class="tcard__company">CV Digital Digdaya Multi Solusi</p>
-            <p class="tcard__desc" data-i18n="exp.digdaya.desc">
-              A software house building web &amp; mobile products, IT infrastructure, and
-              digital-marketing consulting and training.
-            </p>
-            <ul class="tcard__points">
-              <li data-i18n="exp.digdaya.b1">Build an ERP application for a fabric-sales company with Laravel.</li>
-              <li data-i18n="exp.digdaya.b2">Add journaling features to existing POS applications.</li>
-              <li data-i18n="exp.digdaya.b3">Fix bugs and ship features on Laravel-based websites.</li>
-            </ul>
-          </div>
-        </article>
-      </li>
-
-      <!-- 4. Lembaga Manajemen Infaq -->
-      <li class="timeline__item">
-        <article class="tcard reveal">
-          <div class="tcard__aside">
-            <p class="tcard__period" data-i18n="exp.lmi.period">Feb 2023 – Jun 2023</p>
-            <p class="tcard__location" data-i18n="exp.lmi.location">Surabaya, Indonesia</p>
-          </div>
-          <div class="tcard__main">
-            <h3 class="tcard__role" data-i18n="exp.lmi.role">Fullstack Programmer (Internship)</h3>
-            <p class="tcard__company">Lembaga Manajemen Infaq</p>
-            <p class="tcard__desc" data-i18n="exp.lmi.desc">
-              A philanthropic institution that elevates underprivileged communities by collecting
-              and managing social funds (zakat, infaq, shadaqah, and waqf).
-            </p>
-            <ul class="tcard__points">
-              <li data-i18n="exp.lmi.b1">Build a fundraising website with Laravel, Bootstrap, and jQuery.</li>
-              <li data-i18n="exp.lmi.b2">Integrate the Xendit payment gateway.</li>
-              <li data-i18n="exp.lmi.b3">Convert Figma designs into Laravel Blade views.</li>
-              <li data-i18n="exp.lmi.b4">Write API documentation with Postman.</li>
-            </ul>
-          </div>
-        </article>
-      </li>
-
-      <!-- 5. Energeek The E-Government Solution -->
-      <li class="timeline__item">
-        <article class="tcard reveal">
-          <div class="tcard__aside">
-            <p class="tcard__period" data-i18n="exp.energeek.period">Jul 2022 – Feb 2023</p>
-            <p class="tcard__location" data-i18n="exp.energeek.location">Surabaya, Indonesia</p>
-          </div>
-          <div class="tcard__main">
-            <h3 class="tcard__role" data-i18n="exp.energeek.role">Backend Developer</h3>
-            <p class="tcard__company">Energeek The E-Government Solution</p>
-            <p class="tcard__desc" data-i18n="exp.energeek.desc">
-              An IT consulting and information-technology services company based in Surabaya,
-              East Java.
-            </p>
-            <ul class="tcard__points">
-              <li data-i18n="exp.energeek.b1">Build APIs with the Laravel framework.</li>
-              <li data-i18n="exp.energeek.b2">Design and build the PostgreSQL schema using Laravel migrations.</li>
-              <li data-i18n="exp.energeek.b3">Write API documentation with Postman and Swagger.</li>
-              <li data-i18n="exp.energeek.b4">Contributed to 4 different projects.</li>
-            </ul>
-          </div>
-        </article>
-      </li>
-
-      <!-- 6. PT Crosstechno Digitech Internasional -->
-      <li class="timeline__item">
-        <article class="tcard reveal">
-          <div class="tcard__aside">
-            <p class="tcard__period" data-i18n="exp.cross.period">Jan 2022 – Jun 2022</p>
-            <p class="tcard__location" data-i18n="exp.cross.location">Surabaya, Indonesia</p>
-          </div>
-          <div class="tcard__main">
-            <h3 class="tcard__role" data-i18n="exp.cross.role">Web Developer</h3>
-            <p class="tcard__company">PT Crosstechno Digitech Internasional</p>
-            <p class="tcard__desc" data-i18n="exp.cross.desc">
-              A company providing web and mobile application development services.
-            </p>
-            <ul class="tcard__points">
-              <li data-i18n="exp.cross.b1">Build APIs and web applications.</li>
-              <li data-i18n="exp.cross.b2">Maintain and update existing web features.</li>
-            </ul>
-          </div>
-        </article>
-      </li>
+      {{/each}}
     </ol>
   </div>
 </section>

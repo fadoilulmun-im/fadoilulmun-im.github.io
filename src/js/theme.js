@@ -6,8 +6,9 @@
    ============================================================================= */
 import { $, readStored, writeStored } from "./dom.js";
 
+/** @param {string} theme */
 function setThemeColorMeta(theme) {
-  let meta = document.getElementById("meta-theme-color");
+  let meta = /** @type {HTMLMetaElement | null} */ (document.getElementById("meta-theme-color"));
   if (!meta) {
     meta = document.createElement("meta");
     meta.name = "theme-color";
@@ -17,6 +18,10 @@ function setThemeColorMeta(theme) {
   meta.setAttribute("content", theme === "dark" ? "#141414" : "#f5f5f3");
 }
 
+/**
+ * @param {string} theme   "light" | "dark"
+ * @param {boolean} persist whether to write the choice to localStorage
+ */
 function applyTheme(theme, persist) {
   document.documentElement.setAttribute("data-theme", theme);
   const btn = $("#theme-toggle");
@@ -47,5 +52,7 @@ export function initTheme() {
     };
     if (mq.addEventListener) mq.addEventListener("change", onChange);
     else if (mq.addListener) mq.addListener(onChange);
-  } catch (e) { /* ignore */ }
+  } catch (e) {
+    /* ignore */
+  }
 }

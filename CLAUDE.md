@@ -5,18 +5,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A single-page personal portfolio (Fadoilul Mun'im) built with **vanilla JavaScript and
-Tailwind CSS v4, bundled by Vite — no UI framework, no tests, no linter.** Source files:
-`index.html` (a thin shell), `src/partials/*.html` (one HTML partial per section — `navbar`,
-`hero`, `about`, `skills`, `experience`, `projects`, `certificates`, `education`, `contact`,
-`footer`), `src/style.css` (Tailwind v4 source + design tokens), and the behavior layer in
-`src/js/` — split one module per task: `i18n.js` (the EN/ID translation strings),
-`dom.js` (`$`/`$$`/storage helpers), `translate.js` (`translatePage` + parity check),
-`theme.js`, `language.js`, `nav.js`, `reveal.js`, and `main.js` (the thin orchestrator that
-imports the others and runs `init()`). `index.html`
+Tailwind CSS v4, bundled by Vite — no UI framework.** There is no runtime framework, but the
+repo does carry lightweight build-time guardrails: Prettier (format), ESLint (flat config),
+`tsc --noEmit` against `jsconfig.json` (`checkJs` + JSDoc — no `.ts` migration), a Playwright
+smoke test, and two custom gate scripts in `scripts/` (`check-i18n.mjs`, `check-links.mjs`).
+Source files: `index.html` (a thin shell), `src/partials/*.html` (one HTML partial per
+section — `navbar`, `hero`, `about`, `skills`, `experience`, `projects`, `certificates`,
+`education`, `contact`, `footer`), `src/data/*.js` (the data-driven sections — `projects`,
+`experience`, `certificates` — see the bilingual model below), `src/style.css` (Tailwind v4
+source + design tokens), and the behavior layer in `src/js/` — split one module per task:
+`i18n.js` (the EN/ID translation strings), `dom.js` (`$`/`$$`/storage helpers), `translate.js`
+(`translatePage` + parity check), `theme.js`, `language.js`, `nav.js`, `reveal.js`, and
+`main.js` (the thin orchestrator that imports the others and runs `init()`). `index.html`
 stitches the partials together at build time via
 `vite-plugin-handlebars` (`{{> navbar }}` → `src/partials/navbar.html`), so it stays static —
-no runtime cost. Static files served as-is live in `public/` (e.g.
-`public/Fadoilul-Munim-CV.pdf`); `npm run build` emits the deployable site to `dist/`.
+no runtime cost; the same plugin's `context`/`helpers` (in `vite.config.js`) render the
+`src/data/*.js` records into the looped sections. Static files served as-is live in `public/`
+(e.g. `public/Fadoilul-Munim-CV.pdf`); `npm run build` emits the deployable site to `dist/`.
 
 ## Running
 
@@ -26,10 +31,19 @@ npm install          # first time only
 npm run dev          # Vite dev server + HMR (prints a localhost URL)
 npm run build        # production build → dist/ (minified, hashed assets)
 npm run preview      # serve the built dist/ locally to sanity-check it
+
+# Quality gates (also run in CI before deploy):
+npm run format       # Prettier --write   (format:check verifies in CI)
+npm run lint         # ESLint
+npm run typecheck    # tsc --noEmit (checkJs + JSDoc)
+npm run check:i18n   # i18n parity + markup coverage — RUN AFTER build (reads dist/)
+npm run check:links  # placeholders + internal anchors — RUN AFTER build (reads dist/)
+npm run check        # the whole chain above, in order
+npm test             # Playwright smoke test (self-contained: builds + previews)
 ```
 
-The only runtime network dependency is the Inter web font; a system-font fallback covers
-offline use.
+Fonts are **self-hosted** via `@fontsource` (Fraunces, Instrument Sans, IBM Plex Mono) —
+there is no runtime network dependency; a system-font fallback covers the load gap.
 
 ## Bilingual content model (most important thing to know)
 
@@ -39,11 +53,20 @@ Every visible string exists in **two places that must stay in sync**:
 2. `src/js/i18n.js` — the `I18N` object, holding `en` and `id` strings keyed by the
    element's `data-i18n` attribute (imported by `src/js/translate.js`).
 
+**Exception — data-driven sections:** Projects and Experience are NOT hand-written in the
+partial. Their copy lives as `{ en, id }` records in `src/data/projects.js` and
+`src/data/experience.js`; the partials render them via `{{#each}}`, and `src/js/i18n.js`
+*generates* the `proj.*` / `exp.*` keys from the same arrays (`buildDataStrings`). So those
+sections have a **single source of truth** — edit the record once, and both the markup and the
+`I18N` dictionary follow. (Certificates, `src/data/certificates.js`, are not translated.)
+
 `translatePage(lang)` rewrites the DOM from `I18N` on load and on language toggle. So:
 
-- **Editing copy:** update the English text in the relevant `src/partials/*.html` **and** the
-  matching key in **both** `I18N.en` and `I18N.id`. Every key must exist in both languages —
-  `checkParity()` logs a console warning on load if one is missing (check DevTools).
+- **Editing copy:** for most sections, update the English text in the relevant
+  `src/partials/*.html` **and** the matching key in **both** `I18N.en` and `I18N.id`; for
+  Projects/Experience, edit the `src/data/*.js` record instead. Every key must exist in both
+  languages — `checkParity()` warns in the console on load, and **`npm run check:i18n` fails
+  the build** (after `vite build`) if a key is missing, mistyped in markup, or orphaned.
 - **Adding a string:** add the element with `data-i18n="my.key"` in the partial, then add
   `my.key` to both `I18N.en` and `I18N.id`.
 - **Adding a whole section:** create `src/partials/<name>.html` and reference it from

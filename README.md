@@ -17,9 +17,9 @@ highlighting, and subtle scroll animations.
   the `<html lang>` attribute updates accordingly.
 - **Responsive & accessible** — mobile-first, no horizontal scroll, ≥44px tap targets,
   semantic landmarks, keyboard focus states, and WCAG-AA color contrast in both themes.
-- **Performance-friendly** — one web font (Inter) with a system fallback, inline SVG icons
-  and favicon, and `IntersectionObserver`-based animations that respect
-  `prefers-reduced-motion`.
+- **Performance-friendly** — self-hosted fonts (Fraunces, Instrument Sans, IBM Plex Mono) with
+  system fallbacks, inline SVG icons and favicon, and `IntersectionObserver`-based animations
+  that respect `prefers-reduced-motion`.
 
 ---
 
@@ -35,15 +35,20 @@ web-portfolio/
 ├── Fadoilul Munim - CV.md  # the source content (kept for reference)
 ├── .github/workflows/
 │   └── deploy.yml          # builds + deploys to GitHub Pages on push to main
+├── scripts/                # build-time guardrails (i18n parity, link check)
 ├── src/
 │   ├── partials/           # one HTML partial per section (the page markup)
 │   │   ├── navbar.html  hero.html  about.html  skills.html  experience.html
 │   │   └── projects.html  certificates.html  education.html  contact.html  footer.html
-│   ├── style.css           # Tailwind v4 source: @theme tokens + @apply components
-│   ├── i18n.js             # EN/ID translation strings (the I18N object)
-│   └── main.js             # theme / language / nav / reveal logic
+│   ├── data/               # data-driven records (projects, experience, certificates)
+│   ├── js/                 # behavior layer — one module per concern
+│   │   ├── i18n.js         # EN/ID translation strings (the I18N object)
+│   │   ├── translate.js    # translatePage + checkParity
+│   │   ├── dom.js  theme.js  language.js  nav.js  reveal.js
+│   │   └── main.js         # thin orchestrator (imports the others, runs init())
+│   └── style.css           # Tailwind v4 source: @theme tokens + @apply components
 └── public/                 # static files copied verbatim into the build
-    └── Fadoilul-Munim-CV.pdf  # ⚠️ PLACEHOLDER — replace with your real CV (see below)
+    └── Fadoilul-Munim-CV.pdf  # the downloadable CV (served at /Fadoilul-Munim-CV.pdf)
 ```
 
 > Build output goes to `dist/` (git-ignored, produced by `npm run build` / CI).
@@ -72,12 +77,11 @@ npm run preview    # serves dist/ locally so you can verify it
 
 ---
 
-## 📄 Add your real CV (PDF)
+## 📄 Update the CV (PDF)
 
-The **Download CV** buttons point to `/Fadoilul-Munim-CV.pdf`. A small placeholder PDF is
-included so the button works out of the box.
+The **Download CV** buttons point to `/Fadoilul-Munim-CV.pdf`. The real CV ships with the repo.
 
-➡️ **Replace it with your real CV** by saving your file at exactly:
+➡️ **To replace it**, save the new file at exactly:
 
 ```
 public/Fadoilul-Munim-CV.pdf
@@ -96,10 +100,10 @@ For nice link previews on social media / chat apps, add a **1200×630 px** PNG a
 public/og-image.png
 ```
 
-After you deploy, also update the absolute URLs in `index.html` (`<head>`): the
-`og:image`, `twitter:image`, `og:url`, and `<link rel="canonical">` tags currently point at
-`https://your-domain.example/` — change them to your real domain. (Open Graph images must be
-absolute URLs to render on most platforms.)
+The absolute URLs in `index.html` (`<head>`) — `og:image`, `twitter:image`, `og:url`, and
+`<link rel="canonical">` — are set to the live site (`https://fadoilulmun-im.github.io/`). If
+you deploy under a different domain, update them there. (Open Graph images must be absolute
+URLs to render on most platforms.)
 
 ---
 
@@ -110,8 +114,14 @@ All visible text is **bilingual**, so each string lives in two places that must 
 1. **`src/partials/<section>.html`** — the English text you see in the markup (this is the
    first paint). The page is split into one partial per section, stitched into `index.html`
    at build time by `vite-plugin-handlebars`.
-2. **`src/i18n.js`** — the `I18N` object, which holds the `en` and `id`
+2. **`src/js/i18n.js`** — the `I18N` object, which holds the `en` and `id`
    strings keyed by `data-i18n` attributes.
+
+> **Projects & experience are data-driven.** Their copy lives as `{ en, id }` records in
+> `src/data/projects.js` and `src/data/experience.js` (certificates, which aren't translated,
+> in `src/data/certificates.js`). Edit the record once — it feeds both the build-time markup
+> (via Handlebars `{{#each}}`) and the runtime `I18N` dictionary, so there's a single source
+> of truth for those sections.
 
 ### To change a piece of text
 - Find its element in the relevant `src/partials/*.html`. It will have a `data-i18n="some.key"`
@@ -127,8 +137,9 @@ All visible text is **bilingual**, so each string lives in two places that must 
 Create `src/partials/<name>.html`, then reference it from `index.html` with `{{> <name> }}`
 in the order you want it to appear.
 
-> The script logs a console warning if a key is missing from either language, so open your
-> browser's DevTools console to catch any gaps.
+> The script logs a console warning if a key is missing from either language (open DevTools to
+> catch gaps), and `npm run check:i18n` enforces the same at build time — a missing or
+> mistyped key fails the build before it can deploy.
 
 ### Translating attributes (aria-label / title)
 Use `data-i18n-attr="aria-label:my.key; title:my.key"` on the element, then add `my.key` to

@@ -22,15 +22,23 @@
 @import "tailwindcss";
 
 /* Self-hosted fonts (Fontsource) — no third-party request, offline-capable.
-   Fraunces ships the optical-size axis (opsz+wght); font-optical-sizing:auto
-   (CSS default) drives the cut from display size. Each @font-face carries a
-   unicode-range, so only the Latin subset is fetched for EN/ID copy. */
+   Every @font-face carries a unicode-range, so a browser only downloads a
+   subset when a matching glyph is rendered (EN/ID copy → Latin only).
+
+   IBM Plex Mono is imported per-subset (latin + latin-ext) rather than via the
+   all-subsets entry, so the unused Cyrillic/Vietnamese woff files are never
+   even emitted into the build. Fraunces (variable) only ships axis-level CSS,
+   not per-language files; its unicode-range already gates the download, so it
+   stays on the combined axis import. */
 @import "@fontsource-variable/fraunces/opsz.css";
 @import "@fontsource-variable/fraunces/opsz-italic.css";
 @import "@fontsource-variable/instrument-sans";
-@import "@fontsource/ibm-plex-mono/400.css";
-@import "@fontsource/ibm-plex-mono/500.css";
-@import "@fontsource/ibm-plex-mono/600.css";
+@import "@fontsource/ibm-plex-mono/latin-400.css";
+@import "@fontsource/ibm-plex-mono/latin-ext-400.css";
+@import "@fontsource/ibm-plex-mono/latin-500.css";
+@import "@fontsource/ibm-plex-mono/latin-ext-500.css";
+@import "@fontsource/ibm-plex-mono/latin-600.css";
+@import "@fontsource/ibm-plex-mono/latin-ext-600.css";
 
 /* Re-point the default `dark` variant at the data-theme attribute. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));

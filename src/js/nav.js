@@ -15,12 +15,18 @@ export function initNav() {
   const openMenu = () => {
     menu.classList.add("is-open");
     toggle.setAttribute("aria-expanded", "true");
-    if (backdrop) { backdrop.hidden = false; backdrop.classList.add("is-open"); }
+    if (backdrop) {
+      backdrop.hidden = false;
+      backdrop.classList.add("is-open");
+    }
   };
   const closeMenu = (returnFocus) => {
     menu.classList.remove("is-open");
     toggle.setAttribute("aria-expanded", "false");
-    if (backdrop) { backdrop.classList.remove("is-open"); backdrop.hidden = true; }
+    if (backdrop) {
+      backdrop.classList.remove("is-open");
+      backdrop.hidden = true;
+    }
     if (returnFocus) toggle.focus();
   };
   const isOpen = () => toggle.getAttribute("aria-expanded") === "true";
@@ -30,7 +36,7 @@ export function initNav() {
 
   // Close when a link inside the menu is clicked.
   menu.addEventListener("click", (e) => {
-    if (e.target.closest("a")) closeMenu();
+    if (e.target instanceof Element && e.target.closest("a")) closeMenu();
   });
 
   // Esc closes and restores focus to the toggle.
@@ -68,7 +74,10 @@ export function initNav() {
     // First section in document order that's currently in the active band.
     let activeId = null;
     for (let i = 0; i < watched.length; i++) {
-      if (visible.has(watched[i].id)) { activeId = watched[i].id; break; }
+      if (visible.has(watched[i].id)) {
+        activeId = watched[i].id;
+        break;
+      }
     }
     links.forEach((l) => {
       const on = activeId && map[activeId] === l;
@@ -85,7 +94,7 @@ export function initNav() {
       });
       setActive();
     },
-    { rootMargin: `-${navH + 8}px 0px -55% 0px`, threshold: 0 }
+    { rootMargin: `-${navH + 8}px 0px -55% 0px`, threshold: 0 },
   );
   watched.forEach((sec) => observer.observe(sec));
 }

@@ -5,100 +5,27 @@
       <span class="rule" aria-hidden="true"></span>
       <p class="eyebrow" data-i18n="cert.eyebrow">Certificates</p>
     </div>
-    <h2 class="section__title reveal" id="certificates-heading" data-i18n="cert.heading">Credentials</h2>
+    <h2 class="section__title reveal" id="certificates-heading" data-i18n="cert.heading">
+      Credentials
+    </h2>
 
+    <!-- Generated from src/data/certificates.js. Titles/issuers are proper nouns
+         and are not translated, so these rows carry no data-i18n keys. -->
     <ul class="certs">
+      {{#each certificates}}
       <li class="cert reveal">
-        <a class="cert__link" href="https://www.dicoding.com/certificates/NVP749OKRPR0" target="_blank"
-          rel="noopener noreferrer">
-          <span class="cert__year">2024</span>
+        <a class="cert__link" href="{{url}}" target="_blank" rel="noopener noreferrer">
+          <span class="cert__year">{{year}}</span>
           <span class="cert__body">
-            <span class="cert__title">Learn to Create Front-End Web for Beginners</span>
-            <span class="cert__issuer">Dicoding Indonesia</span>
+            <span class="cert__title">{{title}}</span>
+            <span class="cert__issuer">{{issuer}}</span>
           </span>
           <svg class="cert__ext icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
             <path d="M14 4h6v6M20 4l-9 9M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6" />
           </svg>
         </a>
       </li>
-      <li class="cert reveal">
-        <a class="cert__link" href="https://www.dicoding.com/certificates/N9ZO66LQDXG5" target="_blank"
-          rel="noopener noreferrer">
-          <span class="cert__year">2023</span>
-          <span class="cert__body">
-            <span class="cert__title">Learn to Create Back-End Applications for Beginners</span>
-            <span class="cert__issuer">Dicoding Indonesia</span>
-          </span>
-          <svg class="cert__ext icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M14 4h6v6M20 4l-9 9M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6" />
-          </svg>
-        </a>
-      </li>
-      <li class="cert reveal">
-        <a class="cert__link" href="https://www.dicoding.com/certificates/JMZV9N5M3PN9" target="_blank"
-          rel="noopener noreferrer">
-          <span class="cert__year">2023</span>
-          <span class="cert__body">
-            <span class="cert__title">Learn Basic JavaScript Programming</span>
-            <span class="cert__issuer">Dicoding Indonesia</span>
-          </span>
-          <svg class="cert__ext icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M14 4h6v6M20 4l-9 9M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6" />
-          </svg>
-        </a>
-      </li>
-      <li class="cert reveal">
-        <a class="cert__link" href="https://www.dicoding.com/certificates/1RXY47KQQPVM" target="_blank"
-          rel="noopener noreferrer">
-          <span class="cert__year">2021</span>
-          <span class="cert__body">
-            <span class="cert__title">Cloud Practitioner Essentials</span>
-            <span class="cert__issuer">Dicoding Indonesia</span>
-          </span>
-          <svg class="cert__ext icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M14 4h6v6M20 4l-9 9M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6" />
-          </svg>
-        </a>
-      </li>
-      <li class="cert reveal">
-        <a class="cert__link" href="https://www.dicoding.com/certificates/J1RXYR0DQPVM" target="_blank"
-          rel="noopener noreferrer">
-          <span class="cert__year">2020</span>
-          <span class="cert__body">
-            <span class="cert__title">Learn Basic Web Programming</span>
-            <span class="cert__issuer">Dicoding Indonesia</span>
-          </span>
-          <svg class="cert__ext icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M14 4h6v6M20 4l-9 9M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6" />
-          </svg>
-        </a>
-      </li>
-      <li class="cert reveal">
-        <a class="cert__link" href="https://sanbercode.com/sertifikat/generate/6ee91b5b-f188-48eb-93ab-cdc3f4247069"
-          target="_blank" rel="noopener noreferrer">
-          <span class="cert__year">2020</span>
-          <span class="cert__body">
-            <span class="cert__title">Laravel Web Development</span>
-            <span class="cert__issuer">Sanbercode</span>
-          </span>
-          <svg class="cert__ext icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M14 4h6v6M20 4l-9 9M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6" />
-          </svg>
-        </a>
-      </li>
-      <li class="cert reveal">
-        <a class="cert__link" href="https://progate.com/path_certificate/590ac5f9qd7l6z" target="_blank"
-          rel="noopener noreferrer">
-          <span class="cert__year">2020</span>
-          <span class="cert__body">
-            <span class="cert__title">Web Development Path — Node.js</span>
-            <span class="cert__issuer">Progate</span>
-          </span>
-          <svg class="cert__ext icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M14 4h6v6M20 4l-9 9M19 13v6a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h6" />
-          </svg>
-        </a>
-      </li>
+      {{/each}}
     </ul>
   </div>
 </section>

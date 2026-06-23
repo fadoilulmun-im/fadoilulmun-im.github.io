@@ -3,10 +3,19 @@
    EN/ID translation strings — the single source for copy.
 
    ⚑ EDITING COPY: change a string in BOTH `en` and `id` below. Every key must
-     exist in both objects — checkParity() in main.js logs a console warning on
-     first load if one is missing.
+     exist in both objects — checkParity() warns in the console on load, and
+     `npm run check:i18n` fails the build if a key is missing or mistyped.
+
+   ⚑ PROJECTS & EXPERIENCE are data-driven: their copy lives as { en, id }
+     records in src/data/projects.js and src/data/experience.js. The proj.* and
+     exp.* keys below are GENERATED from those records (see buildDataStrings), so
+     the build-time markup and this runtime dictionary share one source.
    ============================================================================= */
-export const I18N = {
+import { projects } from "../data/projects.js";
+import { experiences } from "../data/experience.js";
+
+/* Static copy — everything that isn't a per-item project/experience string. */
+const STATIC = {
   en: {
     "a11y.skip": "Skip to content",
 
@@ -54,100 +63,11 @@ export const I18N = {
     "exp.eyebrow": "Experience",
     "exp.heading": "Where I've worked",
 
-    "exp.gajihub.role": "Backend Developer",
-    "exp.gajihub.period": "Jan 2025 – Present",
-    "exp.gajihub.location": "Remote",
-    "exp.gajihub.desc":
-      "GajiHub is online HR & payroll software that streamlines HR for small businesses.",
-    "exp.gajihub.b1": "Build RESTful APIs with Laravel.",
-    "exp.gajihub.b2": "Add new features requested by clients.",
-    "exp.gajihub.b3": "Adjust existing features to client requests.",
-    "exp.gajihub.b4": "Write API documentation with Swagger.",
-    "exp.gajihub.b5": "Optimize existing features.",
-    "exp.gajihub.b6":
-      "Build internal admin-panel features with React, Tailwind CSS, Inertia.js, and Laravel.",
-    "exp.gajihub.b7": "Write unit tests with PHPUnit.",
-    "exp.gajihub.b8": "Manage tasks in Notion.",
-
-    "exp.kampung.role": "Fullstack Programmer",
-    "exp.kampung.period": "Apr 2024 – Dec 2024",
-    "exp.kampung.location": "Kediri, Indonesia",
-    "exp.kampung.desc":
-      "An English-language course institution offering both offline and online learning.",
-    "exp.kampung.b1": "Build cross-platform marketing apps with Flutter.",
-    "exp.kampung.b2": "Build RESTful APIs with Laravel and NestJS.",
-    "exp.kampung.b3": "Write API documentation with Swagger, Scribe, and Scramble.",
-
-    "exp.digdaya.role": "PHP Laravel Fullstack Programmer",
-    "exp.digdaya.period": "Jul 2023 – Dec 2025",
-    "exp.digdaya.location": "Remote",
-    "exp.digdaya.desc":
-      "A software house building web & mobile products, IT infrastructure, and digital-marketing consulting and training.",
-    "exp.digdaya.b1": "Build an ERP application for a fabric-sales company with Laravel.",
-    "exp.digdaya.b2": "Add journaling features to existing POS applications.",
-    "exp.digdaya.b3": "Fix bugs and ship features on Laravel-based websites.",
-
-    "exp.lmi.role": "Fullstack Programmer (Internship)",
-    "exp.lmi.period": "Feb 2023 – Jun 2023",
-    "exp.lmi.location": "Surabaya, Indonesia",
-    "exp.lmi.desc":
-      "A philanthropic institution that elevates underprivileged communities by collecting and managing social funds (zakat, infaq, shadaqah, and waqf).",
-    "exp.lmi.b1": "Build a fundraising website with Laravel, Bootstrap, and jQuery.",
-    "exp.lmi.b2": "Integrate the Xendit payment gateway.",
-    "exp.lmi.b3": "Convert Figma designs into Laravel Blade views.",
-    "exp.lmi.b4": "Write API documentation with Postman.",
-
-    "exp.energeek.role": "Backend Developer",
-    "exp.energeek.period": "Jul 2022 – Feb 2023",
-    "exp.energeek.location": "Surabaya, Indonesia",
-    "exp.energeek.desc":
-      "An IT consulting and information-technology services company based in Surabaya, East Java.",
-    "exp.energeek.b1": "Build APIs with the Laravel framework.",
-    "exp.energeek.b2": "Design and build the PostgreSQL schema using Laravel migrations.",
-    "exp.energeek.b3": "Write API documentation with Postman and Swagger.",
-    "exp.energeek.b4": "Contributed to 4 different projects.",
-
-    "exp.cross.role": "Web Developer",
-    "exp.cross.period": "Jan 2022 – Jun 2022",
-    "exp.cross.location": "Surabaya, Indonesia",
-    "exp.cross.desc":
-      "A company providing web and mobile application development services.",
-    "exp.cross.b1": "Build APIs and web applications.",
-    "exp.cross.b2": "Maintain and update existing web features.",
-
     "proj.eyebrow": "Projects",
     "proj.heading": "Selected work",
-    "proj.lead":
-      "Highlights derived from my professional experience.",
+    "proj.lead": "Highlights derived from my professional experience.",
     "proj.linkSoon": "Link coming soon",
     "proj.visitSite": "Visit site",
-    "proj.gajihub.title": "HR & Payroll API Platform",
-    "proj.gajihub.desc":
-      "RESTful payroll & HR APIs in Laravel, plus an internal admin panel built with React, Tailwind CSS, and Inertia.js.",
-    "proj.semtek.title": "Totalisator Monitoring Platform",
-    "proj.semtek.desc":
-      "Web-based totalisator system with real-time transaction monitoring, customizable dashboards, and operator oversight.",
-    "proj.wanderup.title": "Travel & Adventure Booking Site",
-    "proj.wanderup.desc":
-      "Marketing & booking site for a Karimunjawa tour operator, with curated vacation packages, detailed package pages, and WhatsApp booking inquiries.",
-    "proj.isaluny.title": "Organization & Member Management System",
-    "proj.isaluny.desc":
-      "Admin platform for managing organization data and membership, built on Laravel with a Filament admin panel.",
-    "proj.erp.title": "Fabric-Sales ERP",
-    "proj.erp.desc":
-      "End-to-end ERP for a fabric-sales company covering core business operations, built with Laravel.",
-    "proj.pos.title": "POS Accounting & Journaling",
-    "proj.pos.desc":
-      "Added accounting journal features to an existing point-of-sale application.",
-    "proj.zakat.title": "Zakat & Infaq Fundraising Site",
-    "proj.zakat.desc":
-      "Online fundraising platform with Xendit payment-gateway integration; Figma designs turned into Blade views.",
-    "proj.flutter.title": "Cross-Platform Marketing App",
-    "proj.flutter.desc":
-      "Cross-platform mobile app for marketing, built with Flutter and backed by Laravel/NestJS APIs.",
-    "proj.egov.title": "E-Government APIs",
-    "proj.egov.desc":
-      "Government service APIs with a PostgreSQL schema designed and built via Laravel migrations.",
 
     "cert.eyebrow": "Certificates",
     "cert.heading": "Credentials",
@@ -219,100 +139,11 @@ export const I18N = {
     "exp.eyebrow": "Pengalaman",
     "exp.heading": "Tempat saya bekerja",
 
-    "exp.gajihub.role": "Backend Developer",
-    "exp.gajihub.period": "Jan 2025 – Sekarang",
-    "exp.gajihub.location": "Remote",
-    "exp.gajihub.desc":
-      "GajiHub adalah perangkat lunak HR & payroll online yang menyederhanakan pengelolaan HR untuk bisnis kecil.",
-    "exp.gajihub.b1": "Membangun RESTful API dengan Laravel.",
-    "exp.gajihub.b2": "Menambahkan fitur baru sesuai permintaan klien.",
-    "exp.gajihub.b3": "Menyesuaikan fitur yang ada dengan permintaan klien.",
-    "exp.gajihub.b4": "Membuat dokumentasi API dengan Swagger.",
-    "exp.gajihub.b5": "Mengoptimalkan fitur yang sudah ada.",
-    "exp.gajihub.b6":
-      "Membangun fitur panel admin internal dengan React, Tailwind CSS, Inertia.js, dan Laravel.",
-    "exp.gajihub.b7": "Menulis unit test dengan PHPUnit.",
-    "exp.gajihub.b8": "Mengelola tugas menggunakan Notion.",
-
-    "exp.kampung.role": "Programmer Fullstack",
-    "exp.kampung.period": "Apr 2024 – Des 2024",
-    "exp.kampung.location": "Kediri, Indonesia",
-    "exp.kampung.desc":
-      "Lembaga kursus bahasa Inggris yang menyediakan pembelajaran offline dan online.",
-    "exp.kampung.b1": "Membangun aplikasi marketing lintas platform dengan Flutter.",
-    "exp.kampung.b2": "Membangun RESTful API dengan Laravel dan NestJS.",
-    "exp.kampung.b3": "Membuat dokumentasi API dengan Swagger, Scribe, dan Scramble.",
-
-    "exp.digdaya.role": "Programmer Fullstack PHP Laravel",
-    "exp.digdaya.period": "Jul 2023 – Des 2025",
-    "exp.digdaya.location": "Remote",
-    "exp.digdaya.desc":
-      "Software house yang membangun produk web & mobile, infrastruktur IT, serta konsultasi dan pelatihan digital marketing.",
-    "exp.digdaya.b1": "Membangun aplikasi ERP untuk perusahaan penjualan kain dengan Laravel.",
-    "exp.digdaya.b2": "Menambahkan fitur jurnal pada aplikasi POS yang sudah ada.",
-    "exp.digdaya.b3": "Memperbaiki bug dan menambah fitur pada situs web berbasis Laravel.",
-
-    "exp.lmi.role": "Programmer Fullstack (Magang)",
-    "exp.lmi.period": "Feb 2023 – Jun 2023",
-    "exp.lmi.location": "Surabaya, Indonesia",
-    "exp.lmi.desc":
-      "Lembaga filantropi yang mengangkat martabat masyarakat kurang mampu melalui penghimpunan dan pengelolaan dana sosial (zakat, infaq, shadaqah, dan wakaf).",
-    "exp.lmi.b1": "Membangun situs web penggalangan dana dengan Laravel, Bootstrap, dan jQuery.",
-    "exp.lmi.b2": "Mengintegrasikan payment gateway Xendit.",
-    "exp.lmi.b3": "Mengonversi desain Figma menjadi tampilan Laravel Blade.",
-    "exp.lmi.b4": "Membuat dokumentasi API dengan Postman.",
-
-    "exp.energeek.role": "Backend Developer",
-    "exp.energeek.period": "Jul 2022 – Feb 2023",
-    "exp.energeek.location": "Surabaya, Indonesia",
-    "exp.energeek.desc":
-      "Perusahaan konsultan dan layanan teknologi informasi yang berlokasi di Surabaya, Jawa Timur.",
-    "exp.energeek.b1": "Membangun API dengan framework Laravel.",
-    "exp.energeek.b2": "Merancang dan membangun skema PostgreSQL menggunakan Laravel migration.",
-    "exp.energeek.b3": "Membuat dokumentasi API dengan Postman dan Swagger.",
-    "exp.energeek.b4": "Berkontribusi pada 4 proyek berbeda.",
-
-    "exp.cross.role": "Web Developer",
-    "exp.cross.period": "Jan 2022 – Jun 2022",
-    "exp.cross.location": "Surabaya, Indonesia",
-    "exp.cross.desc":
-      "Perusahaan yang menyediakan layanan pengembangan aplikasi web dan mobile.",
-    "exp.cross.b1": "Membangun API dan aplikasi web.",
-    "exp.cross.b2": "Memelihara dan memperbarui fitur web yang sudah ada.",
-
     "proj.eyebrow": "Proyek",
     "proj.heading": "Karya pilihan",
-    "proj.lead":
-      "Sorotan yang diambil dari pengalaman profesional saya.",
+    "proj.lead": "Sorotan yang diambil dari pengalaman profesional saya.",
     "proj.linkSoon": "Tautan segera hadir",
     "proj.visitSite": "Kunjungi situs",
-    "proj.gajihub.title": "Platform API HR & Payroll",
-    "proj.gajihub.desc":
-      "RESTful API payroll & HR di Laravel, ditambah panel admin internal yang dibangun dengan React, Tailwind CSS, dan Inertia.js.",
-    "proj.semtek.title": "Platform Monitoring Totalisator",
-    "proj.semtek.desc":
-      "Sistem totalisator berbasis web dengan monitoring transaksi real-time, dashboard yang dapat disesuaikan, dan pengawasan operator.",
-    "proj.wanderup.title": "Situs Pemesanan Wisata & Petualangan",
-    "proj.wanderup.desc":
-      "Situs pemasaran & pemesanan untuk operator wisata Karimunjawa, dengan paket liburan pilihan, halaman detail paket, dan pemesanan lewat WhatsApp.",
-    "proj.isaluny.title": "Sistem Manajemen Organisasi & Anggota",
-    "proj.isaluny.desc":
-      "Platform admin untuk mengelola data organisasi dan keanggotaan, dibangun dengan Laravel dan panel admin Filament.",
-    "proj.erp.title": "ERP Penjualan Kain",
-    "proj.erp.desc":
-      "ERP menyeluruh untuk perusahaan penjualan kain yang mencakup operasi bisnis inti, dibangun dengan Laravel.",
-    "proj.pos.title": "Akuntansi & Jurnal POS",
-    "proj.pos.desc":
-      "Menambahkan fitur jurnal akuntansi pada aplikasi point-of-sale yang sudah ada.",
-    "proj.zakat.title": "Situs Penggalangan Zakat & Infaq",
-    "proj.zakat.desc":
-      "Platform penggalangan dana online dengan integrasi payment gateway Xendit; desain Figma diubah menjadi tampilan Blade.",
-    "proj.flutter.title": "Aplikasi Marketing Lintas Platform",
-    "proj.flutter.desc":
-      "Aplikasi mobile lintas platform untuk marketing, dibangun dengan Flutter dan didukung API Laravel/NestJS.",
-    "proj.egov.title": "API E-Government",
-    "proj.egov.desc":
-      "API layanan pemerintahan dengan skema PostgreSQL yang dirancang dan dibangun melalui Laravel migration.",
 
     "cert.eyebrow": "Sertifikat",
     "cert.heading": "Kredensial",
@@ -336,4 +167,34 @@ export const I18N = {
     "footer.rights": "Hak cipta dilindungi.",
     "footer.backToTop": "Kembali ke atas ↑",
   },
+};
+
+/**
+ * Generate the proj.* / exp.* keys for one language from the shared data, so the
+ * markup ({{#each}} loops) and this dictionary never drift.
+ * @param {"en" | "id"} lang
+ * @returns {Record<string, string>}
+ */
+function buildDataStrings(lang) {
+  /** @type {Record<string, string>} */
+  const out = {};
+  for (const p of projects) {
+    out[`proj.${p.key}.title`] = p.title[lang];
+    out[`proj.${p.key}.desc`] = p.desc[lang];
+  }
+  for (const e of experiences) {
+    out[`exp.${e.key}.role`] = e.role[lang];
+    out[`exp.${e.key}.period`] = e.period[lang];
+    out[`exp.${e.key}.location`] = e.location[lang];
+    out[`exp.${e.key}.desc`] = e.desc[lang];
+    e.points.forEach((pt, i) => {
+      out[`exp.${e.key}.b${i + 1}`] = pt[lang];
+    });
+  }
+  return out;
+}
+
+export const I18N = {
+  en: { ...STATIC.en, ...buildDataStrings("en") },
+  id: { ...STATIC.id, ...buildDataStrings("id") },
 };

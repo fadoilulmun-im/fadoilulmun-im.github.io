@@ -6,13 +6,47 @@
        writeStored      (where storage throws) degrades gracefully.
    ============================================================================= */
 
-export const $ = (sel, ctx) => (ctx || document).querySelector(sel);
-export const $$ = (sel, ctx) => Array.from((ctx || document).querySelectorAll(sel));
+/**
+ * querySelector shorthand. Every call site here queries HTMLElements, so the
+ * return is typed as such; cast at the call site for SVG/other element types.
+ * @param {string} sel
+ * @param {ParentNode} [ctx]
+ * @returns {HTMLElement | null}
+ */
+export const $ = (sel, ctx) =>
+  /** @type {HTMLElement | null} */ ((ctx || document).querySelector(sel));
 
+/**
+ * querySelectorAll as a real Array of HTMLElement.
+ * @param {string} sel
+ * @param {ParentNode} [ctx]
+ * @returns {HTMLElement[]}
+ */
+export const $$ = (sel, ctx) =>
+  /** @type {HTMLElement[]} */ (Array.from((ctx || document).querySelectorAll(sel)));
+
+/**
+ * Read a localStorage value, returning null if storage is unavailable.
+ * @param {string} key
+ * @returns {string | null}
+ */
 export function readStored(key) {
-  try { return localStorage.getItem(key); } catch (e) { return null; }
+  try {
+    return localStorage.getItem(key);
+  } catch (e) {
+    return null;
+  }
 }
 
+/**
+ * Write a localStorage value, silently ignoring failures (e.g. private mode).
+ * @param {string} key
+ * @param {string} val
+ */
 export function writeStored(key, val) {
-  try { localStorage.setItem(key, val); } catch (e) { /* ignore */ }
+  try {
+    localStorage.setItem(key, val);
+  } catch (e) {
+    /* ignore */
+  }
 }

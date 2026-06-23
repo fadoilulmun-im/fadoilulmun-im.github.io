@@ -22,5 +22,10 @@ node_modules/
 # Vite build output (produced by CI on deploy)
 dist/
 
+# Playwright test artifacts
+test-results/
+playwright-report/
+.playwright/
+
 # Claude Code local settings (machine-local permissions)
 .claude/settings.local.json

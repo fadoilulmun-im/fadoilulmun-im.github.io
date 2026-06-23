@@ -8,6 +8,10 @@ import { translatePage } from "./translate.js";
 
 const LANGS = ["en", "id"];
 
+/**
+ * @param {string} lang    "en" | "id" (anything else falls back to "en")
+ * @param {boolean} persist whether to write the choice to localStorage
+ */
 function applyLang(lang, persist) {
   if (LANGS.indexOf(lang) === -1) lang = "en";
   document.documentElement.setAttribute("lang", lang);
@@ -28,8 +32,7 @@ export function initLang() {
   const btn = $("#lang-toggle");
   if (btn) {
     btn.addEventListener("click", () => {
-      const next =
-        document.documentElement.getAttribute("lang") === "en" ? "id" : "en";
+      const next = document.documentElement.getAttribute("lang") === "en" ? "id" : "en";
       applyLang(next, true);
     });
   }

@@ -5,94 +5,44 @@
       <span class="rule" aria-hidden="true"></span>
       <p class="eyebrow" data-i18n="proj.eyebrow">Projects</p>
     </div>
-    <h2 class="section__title reveal" id="projects-heading" data-i18n="proj.heading">Selected work</h2>
+    <h2 class="section__title reveal" id="projects-heading" data-i18n="proj.heading">
+      Selected work
+    </h2>
     <p class="section__lead" data-i18n="proj.lead">
       Highlights derived from my professional experience.
     </p>
 
+    <!-- Cards are generated from src/data/projects.js (see vite.config.js context).
+         Each card keeps its data-i18n keys so the runtime EN/ID toggle still works;
+         those keys are generated from the same data in src/js/i18n.js. -->
     <ol class="projects">
-      <!-- 1 -->
+      {{#each projects}}
       <li class="pcard reveal">
-        <span class="pcard__index" aria-hidden="true">01</span>
+        <span class="pcard__index" aria-hidden="true">{{index}}</span>
         <div class="pcard__body">
-          <h3 class="pcard__title" data-i18n="proj.gajihub.title">HR &amp; Payroll API Platform</h3>
-          <p class="pcard__context">GajiHub</p>
-          <p class="pcard__desc" data-i18n="proj.gajihub.desc">
-            RESTful payroll &amp; HR APIs in Laravel, plus an internal admin panel built with
-            React, Tailwind CSS, and Inertia.js.
-          </p>
+          <h3 class="pcard__title" data-i18n="proj.{{key}}.title">{{title.en}}</h3>
+          <p class="pcard__context">{{company}}</p>
+          <p class="pcard__desc" data-i18n="proj.{{key}}.desc">{{desc.en}}</p>
           <ul class="chips chips--sm">
-            <li class="chip">Laravel</li>
-            <li class="chip">REST API</li>
-            <li class="chip">React.js</li>
-            <li class="chip">Tailwind CSS</li>
-            <li class="chip">Inertia.js</li>
-            <li class="chip">PHPUnit</li>
+            {{#each chips}}
+            <li class="chip">{{this}}</li>
+            {{/each}}
           </ul>
-          <a class="pcard__link pcard__link--live" href="https://gajihub.com"
-             target="_blank" rel="noopener noreferrer" data-i18n="proj.visitSite">Visit site</a>
+          {{#if url}}
+          <a
+            class="pcard__link pcard__link--live"
+            href="{{url}}"
+            target="_blank"
+            rel="noopener noreferrer"
+            data-i18n="proj.visitSite"
+            >Visit site</a
+          >
+          {{else}}
+          <span class="pcard__link" data-i18n="proj.linkSoon">Link coming soon</span>
+          {{/if}}
         </div>
       </li>
-
-      <!-- 2 -->
-      <li class="pcard reveal">
-        <span class="pcard__index" aria-hidden="true">02</span>
-        <div class="pcard__body">
-          <h3 class="pcard__title" data-i18n="proj.semtek.title">Totalisator Monitoring Platform</h3>
-          <p class="pcard__context">Semtek Indonesia</p>
-          <p class="pcard__desc" data-i18n="proj.semtek.desc">
-            Web-based totalisator system with real-time transaction monitoring, customizable
-            dashboards, and operator oversight.
-          </p>
-          <ul class="chips chips--sm">
-            <li class="chip">Laravel</li>
-            <li class="chip">REST API</li>
-            <li class="chip">Bootstrap CSS</li>
-          </ul>
-          <a class="pcard__link pcard__link--live" href="https://semtekindonesia.com"
-             target="_blank" rel="noopener noreferrer" data-i18n="proj.visitSite">Visit site</a>
-        </div>
-      </li>
-
-      <!-- 3 -->
-      <li class="pcard reveal">
-        <span class="pcard__index" aria-hidden="true">03</span>
-        <div class="pcard__body">
-          <h3 class="pcard__title" data-i18n="proj.wanderup.title">Travel &amp; Adventure Booking Site</h3>
-          <p class="pcard__context">WanderUp Adventure</p>
-          <p class="pcard__desc" data-i18n="proj.wanderup.desc">
-            Marketing &amp; booking site for a Karimunjawa tour operator, with curated vacation
-            packages, detailed package pages, and WhatsApp booking inquiries.
-          </p>
-          <ul class="chips chips--sm">
-            <li class="chip">Next.js</li>
-            <li class="chip">Bootstrap CSS</li>
-          </ul>
-          <a class="pcard__link pcard__link--live" href="https://wanderupadventure-fadoilulmunims-projects.vercel.app"
-             target="_blank" rel="noopener noreferrer" data-i18n="proj.visitSite">Visit site</a>
-        </div>
-      </li>
-
-      <!-- 4 -->
-      <li class="pcard reveal">
-        <span class="pcard__index" aria-hidden="true">04</span>
-        <div class="pcard__body">
-          <h3 class="pcard__title" data-i18n="proj.isaluny.title">Organization &amp; Member Management System</h3>
-          <p class="pcard__context">isaluny</p>
-          <p class="pcard__desc" data-i18n="proj.isaluny.desc">
-            Admin platform for managing organization data and membership, built on Laravel with a
-            Filament admin panel.
-          </p>
-          <ul class="chips chips--sm">
-            <li class="chip">Laravel</li>
-            <li class="chip">Filament</li>
-            <li class="chip">Livewire</li>
-            <li class="chip">Blade</li>
-          </ul>
-          <a class="pcard__link pcard__link--live" href="https://isaluny-main-uyspxv.free.laravel.cloud"
-             target="_blank" rel="noopener noreferrer" data-i18n="proj.visitSite">Visit site</a>
-        </div>
-      </li>
+      {{/each}}
     </ol>
   </div>
 </section>

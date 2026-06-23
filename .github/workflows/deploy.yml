@@ -26,13 +26,31 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      # Quality gates — a regression here blocks the deploy.
+      - run: npm run format:check
+      - run: npm run lint
+      - run: npm run typecheck
       - run: npm run build
+      - run: npm run check:i18n # i18n parity + markup coverage (reads dist/)
+      - run: npm run check:links # placeholders + internal anchors (reads dist/)
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist
 
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+
   deploy:
-    needs: build
+    needs: [build, e2e]
     runs-on: ubuntu-latest
     environment:
       name: github-pages

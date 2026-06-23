@@ -10,9 +10,7 @@ export function initReveal() {
   const items = $$(".reveal");
   if (!items.length) return;
 
-  const reduce =
-    window.matchMedia &&
-    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   if (reduce || !("IntersectionObserver" in window)) {
     items.forEach((el) => el.classList.add("is-visible"));
@@ -28,7 +26,7 @@ export function initReveal() {
         }
       });
     },
-    { rootMargin: "0px 0px -10% 0px", threshold: 0.08 }
+    { rootMargin: "0px 0px -10% 0px", threshold: 0.08 },
   );
   items.forEach((el) => observer.observe(el));
 }
